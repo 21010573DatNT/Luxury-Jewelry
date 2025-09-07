@@ -1,0 +1,28 @@
+.container-product {
+    width: 100%;
+    height: 100%;
+    
+    .product-list-title {
+
+        width: 100%;
+        height: 50px;
+        display: flex;
+        
+        .product-title {
+            width: 100%;
+            height: 100%;
+            font-size: 16px; 
+            text-align: center; 
+            color: #333; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .product-main {
+        margin-top: 30px;
+        margin-left: 20px;
+
+    }
+}

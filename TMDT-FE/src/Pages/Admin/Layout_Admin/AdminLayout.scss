@@ -1,0 +1,45 @@
+.admin-layout {
+  min-height: 100vh;
+
+  .logo {
+    height: 32px;
+    margin: 16px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .admin-header {
+    padding: 0 24px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .trigger {
+      font-size: 18px;
+      cursor: pointer;
+      transition: color 0.3s;
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
+
+    .header-right {
+      .ant-avatar {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .admin-content {
+    margin: 24px;
+    padding: 24px;
+    background: #fff;
+    min-height: 280px;
+  }
+}

@@ -1,0 +1,199 @@
+.user-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.dashboard-layout {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    min-height: calc(100vh - 40px);
+}
+
+.dashboard-sider {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+}
+
+.sider-content {
+    padding: 24px 0;
+}
+
+.user-welcome {
+    text-align: center;
+    padding: 0 24px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 24px;
+}
+
+.welcome-avatar {
+    margin-bottom: 12px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.welcome-name {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.welcome-role {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin: 4px 0 0;
+}
+
+.dashboard-menu {
+    background: transparent;
+    border: none;
+}
+
+.dashboard-menu .ant-menu-item {
+    margin: 4px 16px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.dashboard-menu .ant-menu-item-selected {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.dashboard-menu .ant-menu-item .anticon {
+    font-size: 16px;
+    margin-right: 12px;
+}
+
+.dashboard-content {
+    background: #f8fafc;
+    min-height: 100%;
+    padding: 32px;
+}
+
+.profile-container,
+.password-container,
+.orders-container {
+    max-width: 800px;
+}
+
+.profile-card,
+.password-card,
+.orders-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+}
+
+.profile-card .ant-card-head,
+.password-card .ant-card-head,
+.orders-card .ant-card-head {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 12px 12px 0 0;
+}
+
+.profile-card .ant-card-head-title,
+.password-card .ant-card-head-title,
+.orders-card .ant-card-head-title {
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.profile-card .ant-card-extra .ant-btn,
+.password-card .ant-card-extra .ant-btn,
+.orders-card .ant-card-extra .ant-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.profile-avatar {
+    margin-right: 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.profile-info h3 {
+    margin: 0 0 8px;
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.profile-email {
+    color: #7f8c8d;
+    margin: 0;
+    font-size: 16px;
+}
+
+.profile-details {
+    display: grid;
+    gap: 16px;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.detail-value {
+    color: #34495e;
+}
+
+.password-form {
+    max-width: 400px;
+}
+
+.password-form .ant-form-item-label > label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.submit-btn {
+    width: 100%;
+    height: 44px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.orders-table .ant-table-thead > tr > th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.order-code {
+    font-weight: 600;
+    color: #667eea;
+}
+
+.order-amount {
+    font-weight: 600;
+    color: #27ae60;
+}
+
+.orders-table .ant-btn-link {
+    padding: 0;
+    height: auto;
+}

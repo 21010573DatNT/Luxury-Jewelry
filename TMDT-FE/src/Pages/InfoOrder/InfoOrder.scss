@@ -1,0 +1,647 @@
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+// Variables
+$primary-color: #2c5aa0;
+$secondary-color: #f8fafc;
+$accent-color: #3b82f6;
+$danger-color: #ef4444;
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$text-muted: #94a3b8;
+$border-color: #e2e8f0;
+$border-light: #f1f5f9;
+$shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+$shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+$shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Mixins
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin card-style {
+    background: white;
+    border-radius: $radius-md;
+    box-shadow: $shadow-md;
+    border: 1px solid $border-light;
+}
+
+@mixin input-focus {
+    border-color: $accent-color;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+@mixin button-primary {
+    background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+    color: white;
+    border: none;
+    border-radius: $radius-sm;
+    padding: $spacing-sm $spacing-lg;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+        background: linear-gradient(135deg, darken($primary-color, 5%) 0%, darken($accent-color, 5%) 100%);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+@mixin button-danger {
+    background: linear-gradient(135deg, $danger-color 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: $radius-sm;
+    padding: $spacing-sm $spacing-lg;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+        background: linear-gradient(135deg, darken($danger-color, 5%) 0%, darken(#dc2626, 5%) 100%);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// Main container
+.order-info-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    padding: $spacing-xl;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+
+    // Payment information section
+    .payment-details-section {
+        @include card-style;
+        padding: $spacing-xl;
+        margin-bottom: $spacing-lg;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, $primary-color 0%, $accent-color 100%);
+        }
+
+        .payment-section-heading {
+            font-size: 28px;
+            font-weight: 700;
+            color: $text-primary;
+            margin-bottom: $spacing-lg;
+            position: relative;
+            padding-bottom: $spacing-sm;
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, $primary-color 0%, $accent-color 100%);
+                border-radius: 2px;
+            }
+        }
+
+        .order-form-group {
+            margin-bottom: $spacing-lg;
+
+            .order-form-label {
+                display: block;
+                font-size: 16px;
+                font-weight: 600;
+                color: $text-primary;
+                margin-bottom: $spacing-xs;
+                position: relative;
+            }
+
+            .order-form-input {
+                width: 100%;
+                padding: $spacing-sm $spacing-md;
+                border: 2px solid $border-color;
+                border-radius: $radius-sm;
+                font-size: 16px;
+                font-family: inherit;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                background: white;
+
+                &:focus {
+                    @include input-focus;
+                }
+
+                &::placeholder {
+                    color: $text-muted;
+                }
+            }
+
+            .order-form-textarea {
+                width: 100%;
+                padding: $spacing-sm $spacing-md;
+                border: 2px solid $border-color;
+                border-radius: $radius-sm;
+                font-size: 16px;
+                font-family: inherit;
+                min-height: 100px;
+                resize: vertical;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                background: white;
+
+                &:focus {
+                    @include input-focus;
+                }
+
+                &::placeholder {
+                    color: $text-muted;
+                }
+            }
+
+            // Fix for Ant Design DatePicker and Select
+            .ant-picker,
+            .ant-select {
+                width: 100% !important;
+                height: auto !important;
+                
+                .ant-picker-input,
+                .ant-select-selector {
+                    border: 2px solid $border-color !important;
+                    border-radius: $radius-sm !important;
+                    padding: $spacing-sm $spacing-md !important;
+                    font-size: 16px !important;
+                    transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+                    
+                    &:hover {
+                        border-color: lighten($accent-color, 20%) !important;
+                    }
+                    
+                    &:focus,
+                    &.ant-picker-focused,
+                    &.ant-select-focused {
+                        border-color: $accent-color !important;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                        outline: none !important;
+                    }
+                }
+
+                // Ensure dropdown can be clicked
+                .ant-picker-dropdown,
+                .ant-select-dropdown {
+                    z-index: 9999 !important;
+                    pointer-events: auto !important;
+                }
+            }
+        }
+    }
+
+    // Order summary section
+    .order-summary-panel {
+        @include card-style;
+        padding: $spacing-xl;
+        position: sticky;
+        top: $spacing-lg;
+        height: fit-content;
+
+        .order-summary-heading {
+            font-size: 24px;
+            font-weight: 700;
+            color: $text-primary;
+            margin-bottom: $spacing-lg;
+            text-align: center;
+            padding-bottom: $spacing-md;
+            border-bottom: 2px solid $border-light;
+            position: relative;
+
+            &::after {
+                content: '🛒';
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 20px;
+            }
+        }
+
+        .order-items-header {
+            @include flex-between;
+            padding: $spacing-md 0;
+            border-bottom: 2px solid $border-light;
+            margin-bottom: $spacing-md;
+
+            .product-column-header,
+            .subtotal-column-header {
+                font-size: 14px;
+                font-weight: 600;
+                color: $text-secondary;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+        }
+
+        .order-item-row {
+            @include flex-between;
+            padding: $spacing-md 0;
+            border-bottom: 1px solid $border-light;
+            transition: background-color 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+
+            &:hover {
+                background: $secondary-color;
+                margin: 0 (-$spacing-md);
+                padding: $spacing-md;
+                border-radius: $radius-sm;
+            }
+
+            .item-details {
+                color: $text-primary;
+                font-weight: 500;
+                font-size: 15px;
+            }
+
+            .item-subtotal {
+                color: $accent-color;
+                font-weight: 600;
+                font-size: 15px;
+            }
+        }
+
+        .order-total-section {
+            @include flex-between;
+            padding: $spacing-lg 0 $spacing-md;
+            border-top: 2px solid $border-color;
+            margin-top: $spacing-lg;
+
+            .total-label-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: $text-primary;
+            }
+
+            .total-amount-display {
+                font-size: 24px;
+                font-weight: 700;
+                color: $danger-color;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        // Payment methods section
+        .payment-methods-section {
+            margin-top: $spacing-xl;
+            padding-top: $spacing-lg;
+            border-top: 2px solid $border-light;
+
+            .payment-methods-heading {
+                font-size: 18px;
+                font-weight: 600;
+                color: $text-primary;
+                margin-bottom: $spacing-md;
+            }
+
+            .payment-options-container {
+                display: flex;
+                flex-direction: column;
+                gap: $spacing-sm;
+
+                .payment-option-item {
+                    display: flex;
+                    align-items: center;
+                    padding: $spacing-sm $spacing-md;
+                    border: 2px solid $border-color;
+                    border-radius: $radius-sm;
+                    cursor: pointer;
+                    transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+                    background: white;
+
+                    &:hover {
+                        border-color: $accent-color;
+                        background: rgba(59, 130, 246, 0.02);
+                        transform: translateY(-1px);
+                        box-shadow: $shadow-sm;
+                    }
+
+                    &.selected,
+                    &:has(input:checked) {
+                        border-color: $accent-color;
+                        background: rgba(59, 130, 246, 0.05);
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                    }
+
+                    input[type="radio"] {
+                        margin-right: $spacing-sm;
+                        transform: scale(1.2);
+                        accent-color: $accent-color;
+                    }
+
+                    label {
+                        font-weight: 500;
+                        color: $text-primary;
+                        cursor: pointer;
+                        font-size: 15px;
+                    }
+                }
+            }
+        }
+
+        // PayPal button container
+        .paypal-button-wrapper {
+            margin-top: $spacing-lg;
+            padding: $spacing-md;
+            border-radius: $radius-sm;
+            background: $secondary-color;
+            border: 1px solid $border-light;
+        }
+
+        // Order button
+        .place-order-button {
+            @include button-danger;
+            width: 100%;
+            margin-top: $spacing-lg;
+            padding: $spacing-md $spacing-lg;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            &:hover::before {
+                left: 100%;
+            }
+
+            &:disabled {
+                background: $text-muted;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+
+                &:hover {
+                    background: $text-muted;
+                    transform: none;
+                }
+            }
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .order-info-wrapper {
+        padding: $spacing-md;
+
+        .payment-details-section,
+        .order-summary-panel {
+            padding: $spacing-lg;
+            margin-bottom: $spacing-md;
+        }
+
+        .order-summary-panel {
+            position: static;
+        }
+
+        .payment-section-heading {
+            font-size: 24px;
+        }
+
+        .order-summary-heading {
+            font-size: 20px;
+        }
+
+        .total-amount-display {
+            font-size: 20px;
+        }
+
+        .payment-options-container {
+            .payment-option-item {
+                padding: $spacing-sm;
+                
+                label {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}
+
+// Loading states - FIXED: Only disable events when actually loading
+.order-info-wrapper.order-loading-state {
+    .payment-details-section,
+    .order-summary-panel {
+        opacity: 0.6;
+        pointer-events: none; // Only disable when loading
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid $border-color;
+            border-top-color: $accent-color;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Success state
+.order-success-state {
+    border-color: $success-color !important;
+    background: rgba(16, 185, 129, 0.05) !important;
+}
+
+// Error state
+.order-error-state {
+    border-color: $danger-color !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+}
+
+// Additional styles for enhanced component
+.order-summary-panel {
+    .order-items-list {
+        margin-bottom: $spacing-lg;
+    }
+
+    .order-disabled {
+        opacity: 0.6;
+        cursor: not-allowed !important;
+        
+        &:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+    }
+
+    .order-security-note {
+        margin-top: $spacing-md;
+        padding: $spacing-sm;
+        background: rgba(16, 185, 129, 0.05);
+        border-radius: $radius-sm;
+        text-align: center;
+        border-left: 4px solid $success-color;
+
+        small {
+            color: $success-color;
+            font-weight: 500;
+            font-size: 13px;
+        }
+    }
+
+    .order-loading-spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: $spacing-xs;
+    }
+}
+
+// Override Ant Design Radio styles within our component
+.payment-options-container {
+    .ant-radio-wrapper {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        
+        .ant-radio {
+            margin-right: $spacing-sm;
+            
+            .ant-radio-inner {
+                border-color: $border-color;
+                
+                &:hover {
+                    border-color: $accent-color;
+                }
+            }
+            
+            &.ant-radio-checked .ant-radio-inner {
+                border-color: $accent-color;
+                background-color: $accent-color;
+                
+                &::after {
+                    background-color: white;
+                }
+            }
+        }
+        
+        span:not(.ant-radio) {
+            font-weight: 500;
+            color: $text-primary;
+            font-size: 15px;
+        }
+    }
+}
+
+// Override Ant Design Input styles
+.order-form-input.ant-input,
+.order-form-textarea.ant-input {
+    border: 2px solid $border-color;
+    border-radius: $radius-sm;
+    padding: $spacing-sm $spacing-md;
+    font-size: 16px;
+    
+    &:hover {
+        border-color: lighten($accent-color, 20%);
+    }
+    
+    &:focus,
+    &.ant-input-focused {
+        @include input-focus;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+}
+
+// REMOVED: Global transition that was causing conflicts
+// * {
+//     transition: all 0.3s ease;
+// }
+
+// Instead, apply specific transitions where needed
+.order-info-wrapper {
+    button,
+    input,
+    textarea,
+    .order-item-row,
+    .payment-option-item {
+        transition: all 0.3s ease;
+    }
+}
+
+// Ensure Ant Design dropdowns work properly
+.ant-picker-dropdown,
+.ant-select-dropdown {
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+}
+
+// Fix for DatePicker calendar icon
+.ant-picker-suffix {
+    pointer-events: auto !important;
+}
+
+// Make sure dropdown panels are clickable
+.ant-picker-panel,
+.ant-select-dropdown-menu {
+    pointer-events: auto !important;
+}

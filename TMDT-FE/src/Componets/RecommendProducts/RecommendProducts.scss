@@ -1,0 +1,26 @@
+.recommend-product {
+    margin-bottom: 20px;
+    border: 2px solid #f7f4f4;
+    border-radius: 15px;
+    padding: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+    .title {
+        font-size: 21px;
+        font-family: "Roboto";
+        font-weight: 400;
+        margin-bottom: 24px;
+        margin-left: 11px;
+    }
+
+    .recommend-product-list {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .ant-col {
+        display: flex;
+        justify-content: center;
+    }
+}

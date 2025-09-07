@@ -1,0 +1,66 @@
+.user {
+    font-family: "Roboto";
+    font-size: 17px;
+    opacity: 0.7;
+    margin-top: 30px;
+    
+    .name{
+        margin-bottom: 30px;
+        .name-input{
+            padding-left: 20px;
+            font-family: "Roboto";
+            width: 600px;
+            height: 30px;
+            margin-left: 46px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.5);
+            box-shadow: "0 2px 8px rgba(0,0,0,0.1)";
+        }
+    }
+    .phone{
+        margin-top: 30px;
+        margin-bottom: 30px;
+        .phone-input{
+            padding-left: 20px;
+            font-family: "Roboto";
+            width: 600px;
+            height: 30px;
+            margin-left: 20px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.5);
+            box-shadow: "0 2px 8px rgba(0,0,0,0.1)";
+        }
+    }
+    .email{
+        margin-bottom: 30px;
+        .email-input{
+            padding-left: 20px;
+            font-family: "Roboto";
+            width: 600px;
+            height: 30px;
+            margin-left: 76.05px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.5);
+            box-shadow: "0 2px 8px rgba(0,0,0,0.1)";
+        }
+    }
+    .save{
+        width: 100px;
+        height: 40px;
+        background: rgb(248, 5, 5);
+        margin-left: 610px;
+        margin-top: 10px;
+        color: white;
+        font-size: 20px;
+        font-family: "Roboto";
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(255, 78, 80, 0.4);
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .save:hover {
+        background: #f65053 ;
+        box-shadow: 0 6px 14px rgba(255, 78, 80, 0.7);
+    }
+}

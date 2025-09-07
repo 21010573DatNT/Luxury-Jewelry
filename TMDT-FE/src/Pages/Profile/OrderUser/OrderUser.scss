@@ -1,0 +1,231 @@
+.orders-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .orders-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .ant-card-head-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+
+  .orders-header {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    
+    .ant-col {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  .order-row {
+    padding: 12px 0;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    .order-amount {
+      font-weight: 600;
+      color: #1890ff;
+    }
+
+    .ant-btn-link {
+      padding: 0;
+      height: auto;
+      font-size: 13px;
+      
+      &:hover {
+        color: #40a9ff;
+      }
+    }
+  }
+}
+
+// Modal styles
+.order-detail-modal {
+  .ant-modal-header {
+    border-bottom: 1px solid #f0f0f0;
+    
+    .ant-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+
+  .order-detail-content {
+    .detail-section {
+      margin-bottom: 16px;
+      border: 1px solid #f0f0f0;
+      border-radius: 6px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .ant-card-head {
+        min-height: auto;
+        padding: 12px 16px;
+        
+        .ant-card-head-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+        }
+      }
+
+      .ant-card-body {
+        padding: 16px;
+      }
+    }
+
+    .order-info-grid {
+      .info-row {
+        display: flex;
+        margin-bottom: 8px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .info-label {
+          min-width: 140px;
+          color: #666;
+          font-size: 13px;
+        }
+
+        .info-value {
+          color: #333;
+          font-size: 13px;
+          
+          &.order-code {
+            font-family: monospace;
+            font-size: 12px;
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+          }
+        }
+      }
+    }
+
+    .items-table {
+      .ant-table-thead th {
+        background-color: #fafafa;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .ant-table-tbody td {
+        font-size: 13px;
+      }
+    }
+
+    .order-summary {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+      text-align: right;
+
+      .summary-row {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+
+        .summary-label {
+          font-size: 14px;
+          color: #666;
+        }
+
+        .summary-value {
+          font-size: 16px;
+          font-weight: 600;
+          color: #1890ff;
+        }
+      }
+    }
+  }
+}
+
+// Status tags
+.ant-tag {
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  
+  &.ant-tag-green {
+    background-color: #f6ffed;
+    border-color: #b7eb8f;
+    color: #52c41a;
+  }
+  
+  &.ant-tag-blue {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+    color: #1890ff;
+  }
+  
+  &.ant-tag-red {
+    background-color: #fff2f0;
+    border-color: #ffccc7;
+    color: #ff4d4f;
+  }
+  
+  &.ant-tag-orange {
+    background-color: #fff7e6;
+    border-color: #ffd591;
+    color: #fa8c16;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .orders-container {
+    padding: 16px;
+    
+    .orders-header {
+      display: none;
+    }
+    
+    .order-row {
+      .ant-col {
+        margin-bottom: 4px;
+        
+        &:before {
+          content: attr(data-label) ': ';
+          font-weight: 600;
+          color: #666;
+          display: inline-block;
+          min-width: 80px;
+        }
+      }
+    }
+  }
+  
+  .order-detail-modal {
+    .ant-modal {
+      width: 95% !important;
+      margin: 10px;
+    }
+    
+    .order-info-grid .info-row {
+      flex-direction: column;
+      
+      .info-label {
+        min-width: auto;
+        margin-bottom: 2px;
+        font-weight: 600;
+      }
+    }
+  }
+}

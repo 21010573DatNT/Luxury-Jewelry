@@ -1,0 +1,632 @@
+// Variables
+$primary-color: #f43f5e;
+$secondary-color: #f59e0b;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$bg-light: #fdf2f8;
+$bg-amber: #fffbeb;
+$white: #ffffff;
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+// Mixins
+@mixin gradient-bg {
+  background: linear-gradient(135deg, $bg-light 0%, $white 50%, $bg-amber 100%);
+}
+
+@mixin gradient-text {
+  background: linear-gradient(to right, $primary-color, $secondary-color);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin gradient-button {
+  background: linear-gradient(to right, $primary-color, $secondary-color);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: linear-gradient(to right, darken($primary-color, 10%), darken($secondary-color, 10%));
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+@mixin card-hover {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-xl;
+  }
+}
+
+// Responsive breakpoints
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+$large: 1200px;
+
+// Base styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: $text-primary;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  
+  @media (min-width: $tablet) {
+    padding: 0 2rem;
+  }
+}
+
+// About Page Styles
+.about-page {
+  min-height: 100vh;
+  @include gradient-bg;
+}
+
+// Header
+.header {
+  background: $white;
+  box-shadow: $shadow-lg;
+  padding: 1.5rem 0;
+  
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    
+    &__icon {
+      width: 2rem;
+      height: 2rem;
+      @include gradient-button;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $white;
+    }
+    
+    &__title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      @include gradient-text;
+      
+      @media (min-width: $tablet) {
+        font-size: 2.25rem;
+      }
+    }
+  }
+}
+
+// Hero Section
+.hero {
+  position: relative;
+  padding: 5rem 0;
+  text-align: center;
+  overflow: hidden;
+  
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba($primary-color, 0.1), rgba($secondary-color, 0.1));
+  }
+  
+  &__content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  &__title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 1.5rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 4rem;
+    }
+    
+    @media (min-width: $desktop) {
+      font-size: 5rem;
+    }
+  }
+  
+  &__subtitle {
+    font-size: 1.125rem;
+    color: $text-secondary;
+    max-width: 60rem;
+    margin: 0 auto;
+    line-height: 1.75;
+    
+    @media (min-width: $tablet) {
+      font-size: 1.25rem;
+    }
+    
+    @media (min-width: $desktop) {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// Stats Section
+.stats {
+  padding: 4rem 0;
+  background: $white;
+  
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    
+    @media (min-width: $tablet) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+.stat-card {
+  text-align: center;
+  
+  &__icon {
+    width: 4rem;
+    height: 4rem;
+    @include gradient-button;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+    margin: 0 auto 1rem;
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+  
+  &__number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 0.5rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 2.5rem;
+    }
+  }
+  
+  &__label {
+    color: $text-secondary;
+    font-weight: 500;
+    font-size: 0.875rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Tabs Section
+.tabs-section {
+  background: #f9fafb;
+  padding: 2rem 0;
+  
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    
+    @media (min-width: $tablet) {
+      gap: 2rem;
+    }
+  }
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: $white;
+  color: $text-secondary;
+  box-shadow: $shadow-sm;
+  
+  &:hover {
+    color: $primary-color;
+    box-shadow: $shadow-md;
+    transform: translateY(-1px);
+  }
+  
+  &--active {
+    @include gradient-button;
+    color: $white;
+    box-shadow: $shadow-lg;
+    
+    &:hover {
+      color: $white;
+    }
+  }
+}
+
+// Content Section
+.content {
+  padding: 4rem 0;
+}
+
+// Story Section
+.story {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+  
+  @media (min-width: $desktop) {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 1.5rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 3rem;
+    }
+  }
+  
+  &__content {
+    p {
+      font-size: 1.125rem;
+      color: $text-secondary;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  &__image {
+    .placeholder-image {
+      width: 100%;
+      height: 24rem;
+      background: linear-gradient(135deg, rgba($primary-color, 0.2), rgba($secondary-color, 0.2));
+      border-radius: 1rem;
+      box-shadow: $shadow-xl;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: $text-secondary;
+      
+      p {
+        margin-top: 1rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Values Section
+.values {
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $text-primary;
+    text-align: center;
+    margin-bottom: 3rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 3rem;
+    }
+  }
+  
+  &__grid {
+    display: grid;
+    gap: 2rem;
+    
+    @media (min-width: $tablet) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+.value-card {
+  background: $white;
+  border-radius: 1rem;
+  box-shadow: $shadow-xl;
+  padding: 2rem;
+  @include card-hover;
+  
+  &__icon {
+    width: 4rem;
+    height: 4rem;
+    @include gradient-button;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+    margin-bottom: 1.5rem;
+  }
+  
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 1rem;
+  }
+  
+  &__description {
+    color: $text-secondary;
+    line-height: 1.75;
+  }
+}
+
+// Team Section
+.team {
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $text-primary;
+    text-align: center;
+    margin-bottom: 3rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 3rem;
+    }
+  }
+  
+  &__grid {
+    display: grid;
+    gap: 2rem;
+    
+    @media (min-width: $tablet) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (min-width: $desktop) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+.team-card {
+  background: $white;
+  border-radius: 1rem;
+  box-shadow: $shadow-xl;
+  overflow: hidden;
+  @include card-hover;
+  
+  &__image {
+    height: 16rem;
+    background: linear-gradient(135deg, rgba($primary-color, 0.2), rgba($secondary-color, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-secondary;
+  }
+  
+  &__content {
+    padding: 1.5rem;
+  }
+  
+  &__name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 0.5rem;
+  }
+  
+  &__role {
+    color: $primary-color;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  &__description {
+    color: $text-secondary;
+    line-height: 1.75;
+  }
+}
+
+// Timeline Section
+.timeline {
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $text-primary;
+    text-align: center;
+    margin-bottom: 3rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 3rem;
+    }
+  }
+  
+  &__content {
+    max-width: 4rem;
+    margin: 0 auto;
+    position: relative;
+    
+    @media (min-width: $tablet) {
+      max-width: 48rem;
+    }
+  }
+  
+  &__line {
+    position: absolute;
+    left: 2rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, $primary-color, $secondary-color);
+  }
+  
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  &__year {
+    width: 4rem;
+    height: 4rem;
+    @include gradient-button;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    box-shadow: $shadow-lg;
+    flex-shrink: 0;
+  }
+  
+  &__event {
+    margin-left: 2rem;
+    background: $white;
+    border-radius: 0.75rem;
+    box-shadow: $shadow-lg;
+    padding: 1.5rem;
+    font-weight: 600;
+    color: $text-primary;
+    flex: 1;
+    transition: box-shadow 0.3s ease;
+    
+    &:hover {
+      box-shadow: $shadow-xl;
+    }
+  }
+}
+
+// CTA Section
+.cta {
+  @include gradient-button;
+  padding: 4rem 0;
+  
+  &__content {
+    text-align: center;
+  }
+  
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $white;
+    margin-bottom: 1.5rem;
+    
+    @media (min-width: $tablet) {
+      font-size: 2.5rem;
+    }
+    
+    @media (min-width: $desktop) {
+      font-size: 3rem;
+    }
+  }
+  
+  &__subtitle {
+    font-size: 1.25rem;
+    color: rgba($white, 0.9);
+    margin-bottom: 2rem;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    
+    @media (min-width: $tablet) {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1rem;
+  
+  &--primary {
+    background: $white;
+    color: $primary-color;
+    box-shadow: $shadow-lg;
+    
+    &:hover {
+      background: #f9fafb;
+      transform: translateY(-2px);
+      box-shadow: $shadow-xl;
+    }
+  }
+  
+  &--secondary {
+    background: transparent;
+    color: $white;
+    border: 2px solid $white;
+    
+    &:hover {
+      background: $white;
+      color: $primary-color;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.about-page {
+  animation: fadeInUp 0.6s ease-out;
+}

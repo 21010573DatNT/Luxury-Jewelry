@@ -1,0 +1,203 @@
+// Login.scss
+.auth-page-container {
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.auth-form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+    position: relative;
+    
+    // Glassmorphism effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        z-index: -1;
+    }
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 32px;
+    
+    .auth-title {
+        color: #2c3e50 !important;
+        font-weight: 600 !important;
+        font-size: 28px !important;
+        margin-bottom: 8px !important;
+        letter-spacing: -0.5px;
+    }
+    
+    .auth-subtitle {
+        color: #7f8c8d !important;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+}
+
+.auth-form {
+    .ant-form-item-label > label {
+        color: #2c3e50;
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .auth-input {
+        &.ant-input-affix-wrapper,
+        &.ant-input {
+            border-radius: 12px;
+            border: 1px solid #e1e8ed;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            
+            &:hover {
+                border-color: #667eea;
+                box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+            }
+            
+            &:focus,
+            &.ant-input-affix-wrapper-focused {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+            
+            .ant-input {
+                border: none;
+                padding: 0;
+                
+                &:focus {
+                    box-shadow: none;
+                }
+            }
+            
+            .anticon {
+                color: #9ca3af;
+            }
+        }
+    }
+    
+    .ant-form-item {
+        margin-bottom: 20px;
+    }
+}
+
+.auth-submit-btn {
+    height: 48px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease !important;
+    
+    &:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    &:focus {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+    }
+    
+    &.ant-btn-loading {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    
+    .auth-footer-text {
+        color: #7f8c8d;
+        font-size: 14px;
+        
+        .auth-link {
+            color: #667eea;
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 4px;
+            transition: color 0.3s ease;
+            
+            &:hover {
+                color: #5a6fd8;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+    .auth-page-container {
+        padding: 16px;
+    }
+    
+    .auth-card {
+        padding: 32px 24px;
+        border-radius: 16px;
+    }
+    
+    .auth-header {
+        .auth-title {
+            font-size: 24px !important;
+        }
+    }
+}
+
+// Custom ant design form validation styles
+.auth-form .ant-form-item-has-error {
+    .auth-input {
+        &.ant-input-affix-wrapper,
+        &.ant-input {
+            border-color: #ff4d4f;
+            
+            &:hover {
+                border-color: #ff4d4f;
+                box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+            }
+            
+            &:focus,
+            &.ant-input-affix-wrapper-focused {
+                border-color: #ff4d4f;
+                box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.1);
+            }
+        }
+    }
+}
+
+.auth-form .ant-form-item-explain-error {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+}

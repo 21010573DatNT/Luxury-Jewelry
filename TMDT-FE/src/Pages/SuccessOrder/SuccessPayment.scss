@@ -1,0 +1,272 @@
+.success-payment-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .success-content {
+        max-width: 800px;
+        width: 100%;
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 40px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+            .success-icon {
+                font-size: 80px;
+                color: #52c41a;
+                margin-bottom: 16px;
+                animation: checkmark 0.6s ease-in-out;
+            }
+
+            .success-title {
+                color: #1890ff;
+                margin-bottom: 12px !important;
+                font-weight: 600;
+            }
+
+            .success-subtitle {
+                font-size: 16px;
+                color: #595959;
+                line-height: 1.6;
+            }
+        }
+
+        .order-info-card,
+        .customer-info-card,
+        .products-card {
+            margin-bottom: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+            .ant-card-head {
+                background: #fafafa;
+                border-bottom: 1px solid #f0f0f0;
+
+                .ant-card-head-title {
+                    color: #1890ff;
+                    font-weight: 600;
+                }
+            }
+
+            .ant-descriptions-item-label {
+                background: #fafafa;
+                font-weight: 500;
+                color: #595959;
+            }
+
+            .ant-descriptions-item-content {
+                background: white;
+            }
+        }
+
+        .products-card {
+            .products-list {
+                .product-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    padding: 12px 0;
+                    border-bottom: 1px solid #f0f0f0;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+                    .product-info {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+
+                        .ant-typography {
+                            margin: 0;
+                        }
+                    }
+
+                    .product-total {
+                        flex-shrink: 0;
+                        margin-left: 16px;
+                    }
+                }
+            }
+
+            .order-summary {
+                .summary-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 8px 0;
+
+                    &.total-row {
+                        padding: 16px 0 8px;
+
+                        .total-amount {
+                            color: #1890ff;
+                            font-size: 18px;
+                        }
+                    }
+
+                    .ant-typography {
+                        margin: 0;
+                    }
+                }
+            }
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin: 32px 0;
+
+            .ant-btn {
+                min-width: 160px;
+                height: 48px;
+                border-radius: 8px;
+                font-weight: 500;
+                font-size: 16px;
+
+                &.ant-btn-primary {
+                    background: #1890ff;
+                    border-color: #1890ff;
+                    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+
+                    &:hover {
+                        background: #40a9ff;
+                        border-color: #40a9ff;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 16px rgba(24, 144, 255, 0.4);
+                    }
+                }
+
+                &.ant-btn-default {
+                    border-color: #d9d9d9;
+                    background: white;
+
+                    &:hover {
+                        border-color: #1890ff;
+                        color: #1890ff;
+                        transform: translateY(-2px);
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    }
+                }
+
+                transition: all 0.3s ease;
+            }
+        }
+
+        .additional-info {
+            text-align: center;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #1890ff;
+
+            .ant-typography {
+                margin: 0;
+                line-height: 1.6;
+            }
+        }
+    }
+}
+
+// Animation cho checkmark icon
+@keyframes checkmark {
+    0% {
+        transform: scale(0) rotate(45deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(45deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .success-payment-container {
+        padding: 12px;
+
+        .success-content {
+            .success-header {
+                padding: 24px 16px;
+
+                .success-icon {
+                    font-size: 60px;
+                }
+
+                .success-title {
+                    font-size: 20px !important;
+                }
+            }
+
+            .action-buttons {
+                .ant-space {
+                    flex-direction: column;
+                    width: 100%;
+
+                    .ant-space-item {
+                        width: 100%;
+
+                        .ant-btn {
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+
+            .products-card {
+                .products-list {
+                    .product-item {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 8px;
+
+                        .product-total {
+                            margin-left: 0;
+                            align-self: flex-end;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .success-payment-container {
+        .success-content {
+            .success-header {
+                .success-icon {
+                    font-size: 48px;
+                }
+
+                .success-title {
+                    font-size: 18px !important;
+                }
+
+                .success-subtitle {
+                    font-size: 14px;
+                }
+            }
+
+            .ant-descriptions {
+                .ant-descriptions-item-label,
+                .ant-descriptions-item-content {
+                    padding: 8px 12px !important;
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}

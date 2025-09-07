@@ -1,0 +1,269 @@
+.header {
+    width: 100%;
+    height: 80px;
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 2px 2px 10px #00000014;
+
+    .ant-row {
+        height: 100%;
+        width: 100%;
+        margin: 0 24px;
+        padding: 0 24px;
+    }
+
+    .logo {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: #d74848;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+
+        &:hover {
+            color: #ff4d4f;
+        }
+    }
+
+    .search-bar {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+        margin-top: -20px;
+
+        .search-item {
+            border: 2px solid rgb(253, 243, 243);
+            border-radius: 10px;
+            background-color: #fffefe;
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+
+            .item {
+                display: flex;
+                margin-bottom: 10px;
+                padding: 10px;
+                align-items: center;
+                cursor: pointer;
+
+                .image-item {
+                    width: 70px;
+                    height: 50px;
+                    margin-right: 10px;
+                    border-radius: 10px;
+                    object-fit: cover;
+                }
+
+                &:hover {
+                    background-color: #f0f0f0;
+                }
+            }
+        }
+
+        .ant-input-search {
+            width: 100%;
+            margin-top: 20px;
+
+            .ant-input {
+                border-radius: 20px 0 0 20px;
+                border: 1px solid #d9d9d9;
+                border-right: none;
+                padding: 8px 16px;
+                height: 40px;
+
+                &:hover,
+                &:focus {
+                    border-color: #d74848;
+                }
+            }
+
+            .ant-input-search-button {
+                border-radius: 0 20px 20px 0;
+                height: 40px;
+                background-color: #d74848;
+                border-color: #d74848;
+
+                &:hover {
+                    background-color: #ff4d4f;
+                    border-color: #ff4d4f;
+                }
+            }
+        }
+    }
+
+    .nav-links {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 32px;
+        font-size: 15px;
+        padding-right: 30px;
+
+        a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+
+            &:hover {
+                color: #d74848;
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                bottom: -4px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background-color: #d74848;
+                transition: width 0.3s ease;
+            }
+
+            &:hover::after {
+                width: 100%;
+            }
+        }
+
+        .login-register,
+        .account-logout {
+            display: flex;
+            align-items: center;
+            font-family: "Roboto";
+            gap: 12px;
+            font-size: 14px;
+            color: #666;
+
+            div {
+                cursor: pointer;
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: #d74848;
+                }
+            }
+
+            span {
+                color: #d9d9d9;
+            }
+        }
+
+        .ant-avatar {
+            cursor: pointer;
+            background-color: #d74848;
+            transition: all 0.3s ease;
+            width: 40px !important;
+            height: 40px !important;
+            line-height: 40px !important;
+            font-size: 20px !important;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+            &:hover {
+                background-color: #ff4d4f;
+                transform: scale(1.05);
+                border-color: #ff4d4f;
+            }
+
+            img {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .cart-icon {
+            cursor: pointer;
+            color: #333;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            &:hover {
+                color: #d74848;
+                transform: scale(1.05);
+            }
+
+            .cart-count {
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background-color: #d74848;
+                color: white;
+                font-size: 10px;
+                font-weight: 600;
+                min-width: 16px;
+                height: 16px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 4px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border: 1px solid #fff;
+            }
+        }
+    }
+}
+
+// --------------------- Responsive ---------------------
+@media screen and (max-width: 768px) {
+    .header {
+        height: auto;
+
+        .ant-row {
+            flex-direction: column;
+            padding: 0 12px;
+            margin: 0;
+        }
+
+        .logo {
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .search-bar {
+            width: 100%;
+            margin: 0 auto 16px;
+            padding: 0;
+
+            .search-item {
+                max-height: 250px;
+            }
+        }
+
+        .nav-links {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 0;
+
+            a {
+                font-size: 16px;
+            }
+
+            .login-register,
+            .account-logout {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .cart-icon {
+                margin-top: 8px;
+            }
+        }
+    }
+}

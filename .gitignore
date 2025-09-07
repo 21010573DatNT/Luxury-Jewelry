@@ -1,0 +1,22 @@
+# Node modules
+TMDT-FE/node_modules/
+TMDT-BE/node_modules/
+
+# Build output
+TMDT-FE/build/
+TMDT-BE/dist/
+TMDT-FE/dist/
+TMDT-BE/build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env files
+
+# Optional editor configs
+.vscode/
+.idea/

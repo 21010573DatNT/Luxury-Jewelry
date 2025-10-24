@@ -119,13 +119,17 @@ module.exports.popular = async (req, res) => {
 module.exports.detail = async (req, res) => {
     try {
         const id = req.params.id;
-        const product = await Product.find({
+        const product = await Product.findOne({
             _id: id,
             deleted: false,
         });
-        res.json(product);
+        if (product) {
+            res.json(product);
+        } else {
+            res.status(404).json({ message: "Không tìm thấy" });
+        }
     } catch (error) {
-        res.json("Không tìm thấy");
+        res.status(500).json({ message: "Lỗi server" });
     }
 };
 
@@ -200,8 +204,10 @@ module.exports.create = async (req, res) => {
             req.body.position = count + 1;
         }
 
+
         const product = new Product({
-            thumbnail: req.body.images ? req.body.images[0] : "",
+            images: req.body.images || [],
+            thumbnail: req.body.images && req.body.images.length > 0 ? req.body.images[0] : "",
             ...req.body,
         });
 
@@ -227,11 +233,18 @@ module.exports.edit = async (req, res) => {
     try {
         const id = req.params.id;
 
+
+        // Nếu có images mới, cập nhật cả images và thumbnail
+        const updateData = { ...req.body };
+        if (req.body.images && req.body.images.length > 0) {
+            updateData.images = req.body.images;
+            updateData.thumbnail = req.body.images[0];
+        }
         await Product.updateOne(
             {
                 _id: id,
             },
-            req.body
+            updateData
         );
 
         res.json({

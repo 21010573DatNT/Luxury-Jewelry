@@ -12,15 +12,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).array("image", 5);
 
+
 const uploadToCloudinary = async (req, res, next) => {
     upload(req, res, async (err) => {
         if (err) {
             return res.status(400).json({ message: "Lỗi khi tải ảnh lên." });
         }
 
-        // Kiểm tra đúng: nếu không có file nào
+        // Nếu không có file nào thì bỏ qua upload, cho phép đi tiếp
         if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ message: "Vui lòng chọn ảnh sản phẩm." });
+            return next();
         }
 
         try {

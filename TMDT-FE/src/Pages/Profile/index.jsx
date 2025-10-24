@@ -17,7 +17,14 @@ const { Sider, Content } = Layout;
 const Profile = () => {
     const [selectedKey, setSelectedKey] = useState("profile");
     const user = useSelector((state) => state.user);
-    const decode = jwtDecode(user.token);
+    let decode = null;
+    try {
+        if (user && user.token && user.token.split('.').length === 3) {
+            decode = jwtDecode(user.token);
+        }
+    } catch (e) {
+        decode = null;
+    }
 
     const menuItems = [
         {

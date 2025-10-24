@@ -24,7 +24,14 @@ const UserProfile = () => {
     const [province, setProvince] = useState();
     const [district, setDistrict] = useState();
     const user = useSelector((state) => state.user);
-    const decode = jwtDecode(user.token);
+    let decode = null;
+    try {
+        if (user && user.token && user.token.split('.').length === 3) {
+            decode = jwtDecode(user.token);
+        }
+    } catch (e) {
+        decode = null;
+    }
 
     const [formData, setFormData] = useState({
         address: user?.address,
@@ -226,7 +233,7 @@ const UserProfile = () => {
                             <Input.TextArea
                                 rows={3}
                                 value={formData.address}
-                                style={{marginTop:20}}
+                                style={{ marginTop: 20 }}
                                 onChange={(e) =>
                                     setFormData((prev) => ({
                                         ...prev,

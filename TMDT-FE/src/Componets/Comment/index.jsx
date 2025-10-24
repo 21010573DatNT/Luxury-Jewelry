@@ -18,8 +18,8 @@ function CommentProduct(prop) {
     };
 
     useEffect(() => {
-        setComments(product.comments);
-    }, []);
+        setComments(Array.isArray(product?.comments) ? product.comments : []);
+    }, [product]);
 
     const handleSubmitComment = (values) => {
         const data = {

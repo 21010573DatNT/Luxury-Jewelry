@@ -1,5 +1,5 @@
-import { Card, Form, Input, Button, message} from 'antd';
-import { LockOutlined} from '@ant-design/icons';
+import { Card, Form, Input, Button, message } from 'antd';
+import { LockOutlined } from '@ant-design/icons';
 import * as UserSerivce from '../../../Services/userService'
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
@@ -7,13 +7,20 @@ import { jwtDecode } from 'jwt-decode';
 const ChangePassword = () => {
     const [form] = Form.useForm();
     const user = useSelector((state) => state.user);
-    const decode = jwtDecode(user.token);
+    let decode = null;
+    try {
+        if (user && user.token && user.token.split('.').length === 3) {
+            decode = jwtDecode(user.token);
+        }
+    } catch (e) {
+        decode = null;
+    }
 
     const handleSubmit = async (values) => {
-        const res = await UserSerivce.UserChangePassword(decode.id,values)
-        if(res.code === 400) {
+        const res = await UserSerivce.UserChangePassword(decode.id, values)
+        if (res.code === 400) {
             message.error("Mật khẩu cũ không chính xác")
-        } else if(res.code === 401) {
+        } else if (res.code === 401) {
             message.error("Mật khẩu mới không được giống mật khẩu cũ")
         } else {
             message.success("Đổi mật khẩu thành công")

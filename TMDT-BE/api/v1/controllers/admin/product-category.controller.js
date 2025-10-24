@@ -101,30 +101,17 @@ module.exports.search = async (req, res) => {
 module.exports.edit = async (req, res) => {
     try {
         const id = req.params.id;
-        if (req.body.image) {
-            await ProductCategory.updateOne(
-                {
-                    _id: id,
-                },
-                {
-                    title: req.body.title,
-                    position: req.body.position,
-                    thumbnail: req.body.image,
-                }
-            );
-        } else {
-            await ProductCategory.updateOne(
-                {
-                    _id: id,
-                },
-                {
-                    title: req.body.title,
-                    position: req.body.position,
-                }
-            );
+        const updateData = {
+            title: req.body.title,
+            position: req.body.position,
+        };
+        // Nếu có ảnh mới (từ cloudinary middleware)
+        if (req.body.images && req.body.images.length > 0) {
+            updateData.thumbnail = req.body.images[0];
+        } else if (req.body.image) {
+            updateData.thumbnail = req.body.image;
         }
-
-
+        await ProductCategory.updateOne({ _id: id }, updateData);
         res.json({
             code: 200,
             message: "Cập nhật danh mục sản phẩm thành công",

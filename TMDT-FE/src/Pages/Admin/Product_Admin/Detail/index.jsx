@@ -9,14 +9,14 @@ const { TextArea } = Input;
 function Product_Detail() {
     const { product_id } = useParams();
     const [product, setProduct] = useState(null);
-    const [productCategory,setProductCategory] = useState(null)
+    const [productCategory, setProductCategory] = useState(null)
 
     const fetchProductDetail = async () => {
         const res = await ProductService.productDetail(product_id);
-        setProduct(res[0]);
+        setProduct(res);
     };
 
-    const fetchProductCategory = async() => {
+    const fetchProductCategory = async () => {
         const res = await ProductService.productCategoryDetail(product?.product_category_id)
         setProductCategory(res.data)
     }
@@ -33,7 +33,7 @@ function Product_Detail() {
     }, [product]);
 
     if (!product || !productCategory) {
-        return <div>Đang tải...</div>; 
+        return <div>Đang tải...</div>;
     }
 
     return (
@@ -42,7 +42,7 @@ function Product_Detail() {
             initialValues={{
                 title: product?.title || "",
                 description: product?.description || "",
-                category:productCategory.title || "",
+                category: productCategory.title || "",
                 color: product?.color || "",
                 material: product?.material || "",
                 stone: product?.stone || "",

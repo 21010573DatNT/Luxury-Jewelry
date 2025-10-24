@@ -37,17 +37,17 @@ export default function AboutPage() {
 
   const team = [
     {
-      name: 'Hà Tiến Duy',
+      name: 'Nguyễn Thành Đạt',
       role: 'Founder & Creative Director',
       description: 'Với hơn 20 năm kinh nghiệm trong ngành trang sức, chị Minh Anh là người sáng lập và dẫn dắt tầm nhìn sáng tạo của thương hiệu.'
     },
     {
-      name: 'Trần Văn Hùng',
+      name: 'Thành Đạt',
       role: 'Master Craftsman',
       description: 'Nghệ nhân chế tác với 15+ năm kinh nghiệm, chuyên gia về kỹ thuật khảm đá và chế tác kim cương.'
     },
     {
-      name: 'Lê Thị Hương',
+      name: 'Thanh Daw',
       role: 'Design Consultant',
       description: 'Chuyên gia tư vấn thiết kế với khả năng hiểu rõ phong cách và nhu cầu của từng khách hàng.'
     }

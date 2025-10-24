@@ -13,7 +13,7 @@ function Product_Edit() {
 
     const fetchProductDetail = async () => {
         const res = await ProductService.productDetail(product_id);
-        setProduct(res[0]);
+        setProduct(res);
     };
 
     const fetchProductCategory = async () => {

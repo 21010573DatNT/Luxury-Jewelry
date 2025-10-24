@@ -13,6 +13,7 @@
         width: 100%;
         margin: 0 24px;
         padding: 0 24px;
+        align-items: center; // vertically center all columns in header
     }
 
     .logo {
@@ -37,15 +38,24 @@
         align-items: center;
         justify-content: center;
         padding: 0 20px;
-        margin-top: -20px;
+        margin-top: 0; // keep centered instead of pulling up
+        position: relative; // anchor dropdown to this container
+        flex: 0 1 520px; // predictable width and centering
 
         .search-item {
+            position: absolute; // show right below the input
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 8px;
             border: 2px solid rgb(253, 243, 243);
             border-radius: 10px;
             background-color: #fffefe;
             width: 100%;
             max-height: 400px;
             overflow-y: auto;
+            z-index: 1200;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 
             .item {
                 display: flex;
@@ -70,7 +80,8 @@
 
         .ant-input-search {
             width: 100%;
-            margin-top: 20px;
+            max-width: 520px;
+            margin-top: 0; // align vertically center
 
             .ant-input {
                 border-radius: 20px 0 0 20px;

@@ -19,7 +19,14 @@ const OrderUser = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const user = useSelector((state) => state.user);
-    const decode = jwtDecode(user.token);
+    let decode = null;
+    try {
+        if (user && user.token && user.token.split('.').length === 3) {
+            decode = jwtDecode(user.token);
+        }
+    } catch (e) {
+        decode = null;
+    }
     const [orders, setOrders] = useState([]);
 
     const OrderUser = async () => {
@@ -31,7 +38,7 @@ const OrderUser = () => {
         OrderUser();
     }, []);
 
-    const showOrderDetail = (order) => {    
+    const showOrderDetail = (order) => {
         setSelectedOrder(order);
         setIsModalVisible(true);
     };
@@ -69,7 +76,7 @@ const OrderUser = () => {
             <Card title="Đơn hàng của tôi" className="orders-card">
                 <div
                     className="orders-header"
-                    style={{ fontWeight: "bold", padding: "8px 0", textAlign:"center" }}
+                    style={{ fontWeight: "bold", padding: "8px 0", textAlign: "center" }}
                 >
                     <Row gutter={16}>
                         <Col span={6}>Ngày đặt</Col>
@@ -87,7 +94,7 @@ const OrderUser = () => {
                             borderBottom: "1px solid #f0f0f0",
                         }}
                     >
-                        <Row gutter={16} align="middle" style={{ textAlign:"center" }}>
+                        <Row gutter={16} align="middle" style={{ textAlign: "center" }}>
                             <Col span={6}>{new Date(order.createdAt).toLocaleDateString()}</Col>
                             <Col span={6}>
                                 <span className="order-amount">
@@ -100,10 +107,10 @@ const OrderUser = () => {
                                         order.status === "finish"
                                             ? "green"
                                             : order.status === "shipping"
-                                            ? "blue"
-                                            : order.status === "refund"
-                                            ? "red"
-                                            : "orange"
+                                                ? "blue"
+                                                : order.status === "refund"
+                                                    ? "red"
+                                                    : "orange"
                                     }
                                 >
                                     {order.status}
@@ -172,12 +179,12 @@ const OrderUser = () => {
                                             selectedOrder.status === "finish"
                                                 ? "green"
                                                 : selectedOrder.status ===
-                                                  "shipping"
-                                                ? "blue"
-                                                : selectedOrder.status ===
-                                                  "refund"
-                                                ? "red"
-                                                : "orange"
+                                                    "shipping"
+                                                    ? "blue"
+                                                    : selectedOrder.status ===
+                                                        "refund"
+                                                        ? "red"
+                                                        : "orange"
                                         }
                                     >
                                         {selectedOrder.status}
@@ -244,7 +251,7 @@ const OrderUser = () => {
                             <div className="order-summary">
                                 <div className="summary-row">
                                     <span className="summary-label">
-                                        Tổng tiền: 
+                                        Tổng tiền:
                                     </span>
                                     <span className="summary-value order-amount">
                                         {selectedOrder.totalPrice.toLocaleString(

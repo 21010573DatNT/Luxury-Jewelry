@@ -16,13 +16,14 @@ const productSchema = new mongoose.Schema({
     description: String,
     price: Number,
     stock: Number,
-    thumbnail: String,
+    images: [String],
+    thumbnail: String, // giữ lại để không lỗi dữ liệu cũ, nhưng FE/BE sẽ dùng images
     status: String,
     rate_total: Number,
     featured: String,
     position: Number,
-    comments:[
-        {   
+    comments: [
+        {
             user_id: String,
             userName: String,
             comment: String,

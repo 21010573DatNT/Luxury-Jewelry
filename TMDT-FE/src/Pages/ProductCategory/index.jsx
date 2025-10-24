@@ -14,11 +14,11 @@ function ProductCategory() {
     const dispatch = useDispatch();
     let product = useSelector((state) => state.product)
 
-    product=product.data
+    product = product.data
 
     const mutation = useMutationHook((category) => ProductService.productGet(category));
 
-    useEffect( () => {
+    useEffect(() => {
         const fetchCategory = async () => {
             try {
                 const res = await ProductService.productCategoryGet();
@@ -28,7 +28,7 @@ function ProductCategory() {
             }
         }
         fetchCategory();
-    },[])
+    }, [])
 
 
 
@@ -41,13 +41,13 @@ function ProductCategory() {
     };
     return (
         <div className="container-product">
-            <Row className="product-list-title">
+            <div className="product-list-title-flex">
                 {category.map((item, index) => (
-                    <Col span={24 / category.length} key={index}>
-                        <div className="product-title" onClick={() =>handleProductCategory(item._id)}>{item.title}</div>
-                    </Col>
+                    <div className="product-title-flex-item" key={index} onClick={() => handleProductCategory(item._id)}>
+                        <div className="product-title">{item.title}</div>
+                    </div>
                 ))}
-            </Row>
+            </div>
             <Row className="product-main">
                 <Col span={4} className="navbar">
                     <NavbarComponents />

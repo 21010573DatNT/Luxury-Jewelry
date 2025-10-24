@@ -17,7 +17,7 @@ const { TextArea } = Input;
 
 function Product_Create() {
     const [productCategory, setProductCategory] = useState([]);
-    const [imageFile, setImageFile] = useState(null);  
+    const [imageFiles, setImageFiles] = useState([]);
     const navigate = useNavigate();
 
     const fetchProductCategory = async () => {
@@ -31,17 +31,15 @@ function Product_Create() {
 
     const handleSubmit = async (values) => {
         const formData = new FormData();
-
         Object.keys(values).forEach((key) => {
-            if (key === "image" && imageFile) {
-                formData.append("image", imageFile); 
-            } else {
+            if (key !== "image") {
                 formData.append(key, values[key]);
             }
         });
-
+        imageFiles.forEach(file => {
+            formData.append("image", file);
+        });
         const res = await ProductService.productCreate(formData);
-
         if (res.code === 200) {
             message.success("Tạo sản phẩm thành công!");
             navigate(`/admin/product`);
@@ -51,12 +49,9 @@ function Product_Create() {
     };
 
 
-    const handleImageChange = (info) => {
-        if (info.file) {
-            setImageFile(info.file.originFileObj);  // Lưu file ảnh vào state khi upload thành công
-        } else if (info.file.status === 'error') {
-            message.error('Lỗi khi tải ảnh!');
-        }
+
+    const handleImageChange = ({ fileList }) => {
+        setImageFiles(fileList.map(file => file.originFileObj).filter(Boolean));
     };
 
     return (
@@ -115,14 +110,16 @@ function Product_Create() {
                 <Input />
             </Form.Item>
 
-            {/* Đá */}
-            <Form.Item label="Đá" name="stone">
-                <Input />
-            </Form.Item>
-
-            {/* Giới tính */}
-            <Form.Item label="Giới tính" name="sex">
-                <Input />
+            {/* Ảnh */}
+            <Form.Item label="Ảnh" name="image">
+                <Upload
+                    listType="picture-card"
+                    multiple
+                    beforeUpload={() => false}
+                    onChange={handleImageChange}
+                >
+                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
             </Form.Item>
 
             {/* Giá */}

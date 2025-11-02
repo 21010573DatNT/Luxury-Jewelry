@@ -17,7 +17,8 @@ const { TextArea } = Input;
 
 function Product_Create() {
     const [productCategory, setProductCategory] = useState([]);
-    const [imageFiles, setImageFiles] = useState([]);
+    // Lưu duy nhất một ảnh cho sản phẩm
+    const [imageFile, setImageFile] = useState(null);
     const navigate = useNavigate();
 
     const fetchProductCategory = async () => {
@@ -36,9 +37,9 @@ function Product_Create() {
                 formData.append(key, values[key]);
             }
         });
-        imageFiles.forEach(file => {
-            formData.append("image", file);
-        });
+        if (imageFile) {
+            formData.append("image", imageFile);
+        }
         const res = await ProductService.productCreate(formData);
         if (res.code === 200) {
             message.success("Tạo sản phẩm thành công!");
@@ -48,10 +49,9 @@ function Product_Create() {
         }
     };
 
-
-
     const handleImageChange = ({ fileList }) => {
-        setImageFiles(fileList.map(file => file.originFileObj).filter(Boolean));
+        const file = fileList?.[0]?.originFileObj || null;
+        setImageFile(file);
     };
 
     return (
@@ -110,17 +110,8 @@ function Product_Create() {
                 <Input />
             </Form.Item>
 
-            {/* Ảnh */}
-            <Form.Item label="Ảnh" name="image">
-                <Upload
-                    listType="picture-card"
-                    multiple
-                    beforeUpload={() => false}
-                    onChange={handleImageChange}
-                >
-                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
-                </Upload>
-            </Form.Item>
+            {/* Ảnh (chỉ 1 ảnh) */}
+            {/* Đã chuyển xuống phần có rules bắt buộc bên dưới */}
 
             {/* Giá */}
             <Form.Item label="Giá" name="price" rules={[{ required: true, message: "Vui lòng nhập giá sản phẩm!" }]}>
@@ -132,12 +123,13 @@ function Product_Create() {
                 <InputNumber min={0} style={{ width: "100%" }} />
             </Form.Item>
 
-            {/* Ảnh */}
+            {/* Ảnh (bắt buộc - chỉ 1 ảnh) */}
             <Form.Item label="Ảnh" name="image" rules={[{ required: true, message: "Vui lòng chọn ảnh sản phẩm!" }]}>
                 <Upload
                     listType="picture-card"
                     maxCount={1}
-                    showUploadList={false}
+                    beforeUpload={() => false}
+                    showUploadList
                     onChange={handleImageChange}
                 >
                     <Button icon={<UploadOutlined />}>Chọn ảnh</Button>

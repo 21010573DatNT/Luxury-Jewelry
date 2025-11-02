@@ -1,10 +1,10 @@
 import "./InfoOrder.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, Button, Input, Radio } from "antd";
+import { Row, Col, Input, Radio } from "antd";
 import { Form, message } from "antd";
 import { useEffect, useState } from "react";
 import { PayPalButton } from "react-paypal-button-v2";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { deleteAllCart } from "../../Redux/reducers/cartUserReducer";
 import { deleteAllOrder } from "../../Redux/reducers/orderReducer";
@@ -19,12 +19,13 @@ const InfoOrder = () => {
     const order = useSelector((state) => state.order);
     const cartUser = useSelector((state) => state.cartUser);
     const user = useSelector((state) => state.user);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const dispatch = useDispatch();
     const [payment, setPayment] = useState();
     const [itemOrder, setItemOrder] = useState([]);
     const [userId, setUserId] = useState(""); // Sử dụng state để quản lý userId
     const [isLoading, setIsLoading] = useState(false);
+    const [canSubmit, setCanSubmit] = useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -44,9 +45,27 @@ const InfoOrder = () => {
         ) || 0;
 
 
-    const handlePayment = (e) => {
-        setPayment(e.target.value);
+    const recomputeSubmitState = (nextPayment) => {
+        const values = form.getFieldsValue();
+        const requiredOK = Boolean(values?.name && values?.address && values?.phone && values?.email);
+        const noErrors = form.getFieldsError().every((f) => f.errors.length === 0);
+        const chosenInput = typeof nextPayment === "string" ? nextPayment : undefined;
+        const chosen = chosenInput !== undefined ? chosenInput : payment;
+        setCanSubmit(Boolean(requiredOK && noErrors && chosen));
     };
+
+    const handlePayment = (e) => {
+        const next = e.target.value;
+        setPayment(next);
+        // cập nhật trạng thái nút ngay bằng giá trị vừa chọn, tránh phụ thuộc timing setState
+        recomputeSubmitState(next);
+    };
+
+    // Nếu người dùng điền thông tin trước rồi mới chọn phương thức, hoặc ngược lại, luôn tính lại
+    useEffect(() => {
+        recomputeSubmitState();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [payment]);
 
     const data = {
         user_id: userId,
@@ -54,62 +73,75 @@ const InfoOrder = () => {
         action_type: "purchase",
     };
 
+    // Xử lý VNPay sẽ được gọi khi người dùng nhấn "Đặt hàng ngay" thay vì khi chọn radio
     const handleVnpay = async () => {
         const infoUser = form.getFieldsValue();
-        const paymentMethod = "Vnpay"
-        setIsLoading(true);
-        try {
-            const data = {
-                userId,
-                infoUser,
-                product: itemOrder,
-                totalPrice,
-                payment: paymentMethod,
-                status: "waiting",
-            };
-            const res = await VnpayService.VnPayCreate(data);
-            if (res.code === 200) {
-                await ActionUserService.UserAction(data);
-                await ProductService.updateStock(itemOrder);
-                if(userId) {
-                    dispatch(deleteAllCart());
-                } else {
-                    dispatch(deleteAllOrder());
-                }
-                window.location.href = res.vnpUrl
+        const paymentMethod = "Vnpay";
+        const data = {
+            userId,
+            infoUser,
+            product: itemOrder,
+            totalPrice,
+            payment: paymentMethod,
+            status: "waiting",
+        };
+
+        const res = await VnpayService.VnPayCreate(data);
+        if (res.code === 200) {
+            await ActionUserService.UserAction(data);
+            await ProductService.updateStock(itemOrder);
+            if (userId) {
+                dispatch(deleteAllCart());
+            } else {
+                dispatch(deleteAllOrder());
             }
-        } catch (error) {
-            console.error("Order submission failed:", error);
-            message.error("Vui lòng nhập đủ thông tin");
-        } finally {
-            setIsLoading(false);
+            window.location.href = res.vnpUrl;
         }
-    }
+    };
 
 
     const hanldeSubmit = async () => {
+        // Kiểm tra hợp lệ form trước khi xử lý
+        try {
+            await form.validateFields();
+        } catch (err) {
+            message.error("Vui lòng nhập đầy đủ và đúng thông tin thanh toán");
+            return;
+        }
+
         const infoUser = form.getFieldsValue();
-        const paymentMethod = "Cash-on-delivery"
+        if (!payment) {
+            message.error("Vui lòng chọn phương thức thanh toán");
+            return;
+        }
+
         setIsLoading(true);
         try {
-            const data = {
-                userId,
-                infoUser,
-                product: itemOrder,
-                totalPrice,
-                payment: paymentMethod,
-                status: "waiting",
-            };
-            const res = await OrderService.CashOnDelivery(data);
-            if (res.code === 200) {
-                await ActionUserService.UserAction(data);
-                await ProductService.updateStock(itemOrder);
-                if(userId) {
-                    dispatch(deleteAllCart());
-                } else {
-                    dispatch(deleteAllOrder());
+            if (payment === "cash-on-delivery") {
+                const paymentMethod = "Cash-on-delivery";
+                const data = {
+                    userId,
+                    infoUser,
+                    product: itemOrder,
+                    totalPrice,
+                    payment: paymentMethod,
+                    status: "waiting",
+                };
+                const res = await OrderService.CashOnDelivery(data);
+                if (res.code === 200) {
+                    await ActionUserService.UserAction(data);
+                    await ProductService.updateStock(itemOrder);
+                    if (userId) {
+                        dispatch(deleteAllCart());
+                    } else {
+                        dispatch(deleteAllOrder());
+                    }
+                    window.location.href = "/success-order";
                 }
-                window.location.href = "/success-order"
+            } else if (payment === "vnpay") {
+                await handleVnpay();
+            } else {
+                message.error("Phương thức thanh toán không hợp lệ");
             }
         } catch (error) {
             console.error("Order submission failed:", error);
@@ -143,9 +175,8 @@ const InfoOrder = () => {
                 {/* Payment Information Section */}
                 <Col xs={24} lg={13}>
                     <div
-                        className={`payment-details-section ${
-                            isLoading ? "order-loading-state" : ""
-                        }`}
+                        className={`payment-details-section ${isLoading ? "order-loading-state" : ""
+                            }`}
                     >
                         <h2 className="payment-section-heading">
                             Thông tin thanh toán
@@ -155,6 +186,7 @@ const InfoOrder = () => {
                             form={form}
                             layout="vertical"
                             onFinish={hanldeSubmit}
+                            onValuesChange={() => recomputeSubmitState()}
                             autoComplete="off"
                         >
                             <div className="order-form-group">
@@ -249,10 +281,10 @@ const InfoOrder = () => {
                             </div>
 
                             <div className="order-form-group">
-                                <Form.Item label="Ghi chú đơn hàng" name="note">
+                                <Form.Item label="Ghi chú đơn hàng (không bắt buộc)" name="note">
                                     <TextArea
                                         className="order-form-textarea"
-                                        placeholder="Ghi chú thêm..."
+                                        placeholder="Ghi chú thêm... (không bắt buộc)"
                                         autoSize={{ minRows: 4, maxRows: 6 }}
                                     />
                                 </Form.Item>
@@ -264,9 +296,8 @@ const InfoOrder = () => {
                 {/* Order Summary Section */}
                 <Col xs={24} lg={11}>
                     <div
-                        className={`order-summary-panel ${
-                            isLoading ? "order-loading-state" : ""
-                        }`}
+                        className={`order-summary-panel ${isLoading ? "order-loading-state" : ""
+                            }`}
                     >
                         <h3 className="order-summary-heading">Đơn hàng của bạn</h3>
 
@@ -319,11 +350,10 @@ const InfoOrder = () => {
                                 style={{ width: "100%" }}
                             >
                                 <div
-                                    className={`payment-option-item ${
-                                        payment === "cash-on-delivery"
-                                            ? "selected"
-                                            : ""
-                                    }`}
+                                    className={`payment-option-item ${payment === "cash-on-delivery"
+                                        ? "selected"
+                                        : ""
+                                        }`}
                                 >
                                     <Radio value="cash-on-delivery">
                                         <span>
@@ -332,20 +362,18 @@ const InfoOrder = () => {
                                     </Radio>
                                 </div>
                                 <div
-                                    className={`payment-option-item ${
-                                        payment === "paypal" ? "selected" : ""
-                                    }`}
+                                    className={`payment-option-item ${payment === "paypal" ? "selected" : ""
+                                        }`}
                                 >
                                     <Radio value="paypal">
                                         <span>💳 Thanh toán qua PayPal</span>
                                     </Radio>
                                 </div>
                                 <div
-                                    className={`payment-option-item ${
-                                        payment === "vnpay" ? "selected" : ""
-                                    }`}
+                                    className={`payment-option-item ${payment === "vnpay" ? "selected" : ""
+                                        }`}
                                 >
-                                    <Radio value="vnpay" onClick={handleVnpay}>
+                                    <Radio value="vnpay">
                                         <span>🏦 Thanh toán qua VNPay</span>
                                     </Radio>
                                 </div>
@@ -438,11 +466,10 @@ const InfoOrder = () => {
                             </div>
                         ) : (
                             <button
-                                className={`place-order-button ${
-                                    !payment || isLoading ? "order-disabled" : ""
-                                }`}
+                                className={`place-order-button ${!canSubmit || isLoading ? "order-disabled" : ""
+                                    }`}
                                 onClick={hanldeSubmit}
-                                disabled={!payment || isLoading}
+                                disabled={!canSubmit || isLoading}
                             >
                                 {isLoading ? (
                                     <>

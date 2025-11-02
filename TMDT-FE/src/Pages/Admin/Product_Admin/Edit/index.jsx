@@ -25,12 +25,14 @@ function Product_Edit() {
 
     useEffect(() => {
         fetchProductDetail();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [product_id]);
 
     useEffect(() => {
         if (product && product.product_category_id) {
             fetchProductCategory();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [product]);
 
     const handleSubmit = async (values) => {
@@ -57,8 +59,6 @@ function Product_Edit() {
                 category: productCategory?.title || "",
                 color: product?.color || "",
                 material: product?.material || "",
-                stone: product?.stone || "",
-                gender: product?.sex || "",
                 price: product?.price || 0,
                 discount: product?.discount || 0,
                 stock: product?.stock || 0,
@@ -94,15 +94,7 @@ function Product_Edit() {
                 <Input />
             </Form.Item>
 
-            {/* Đá */}
-            <Form.Item label="Đá" name="stone">
-                <Input />
-            </Form.Item>
-
-            {/* Giới tính */}
-            <Form.Item label="Giới tính" name="gender">
-                <Input />
-            </Form.Item>
+            {/* Đã bỏ các thuộc tính Đá và Giới tính theo yêu cầu */}
 
             {/* Giá */}
             <Form.Item label="Giá" name="price">

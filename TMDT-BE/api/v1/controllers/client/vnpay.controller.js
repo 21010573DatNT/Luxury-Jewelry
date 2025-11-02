@@ -2,131 +2,140 @@ const moment = require("moment");
 const crypto = require("crypto");
 const qs = require("qs");
 const Order = require("../../models/order.model");
+const config = require("../../../../config/default.json");
 
+// Hàm sắp xếp Object đúng chuẩn VNPAY
 function sortObject(obj) {
-	let sorted = {};
-	let str = [];
-	let key;
-	for (key in obj){
-		if (obj.hasOwnProperty(key)) {
-		str.push(encodeURIComponent(key));
-		}
-	}
-	str.sort();
-    for (key = 0; key < str.length; key++) {
-        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
-    }
+    let sorted = {};
+    let keys = Object.keys(obj).sort();
+    keys.forEach((key) => {
+        sorted[key] = encodeURIComponent(obj[key]).replace(/%20/g, "+");
+    });
     return sorted;
 }
-// Tạo link thanh toán VNPAY
+
+// -----------------------------
+// TẠO LINK THANH TOÁN VNPAY
+// -----------------------------
 module.exports.createPaymentUrl = async (req, res) => {
-    const newOrder = new Order(req.body)
+    try {
+        const newOrder = new Order(req.body);
+        await newOrder.save();
 
-    await newOrder.save()
-    process.env.TZ = "Asia/Ha_Noi";
+        process.env.TZ = "Asia/Ho_Chi_Minh";
 
-    let date = new Date();
-    let createDate = moment(date).format("YYYYMMDDHHmmss");
-    let config = require("../../../../config/default.json");
+        const date = new Date();
+        const createDate = moment(date).format("YYYYMMDDHHmmss");
 
-    let ipAddr =
-        req.headers["x-forwarded-for"] ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        req.connection.socket.remoteAddress;
+        const ipAddr =
+            req.headers["x-forwarded-for"]?.split(",")[0] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress;
 
-    let tmnCode = config.vnp_TmnCode;
-    let secretKey = config.vnp_HashSecret;
-    let vnpUrl = config.vnp_Url;
-    let returnUrl = config.vnp_ReturnUrl;
-    let orderId = moment(date).format("DDHHmmss");
-    let amount = newOrder.totalPrice;
+        const tmnCode = config.vnp_TmnCode;
+        const secretKey = config.vnp_HashSecret;
+        const vnpUrl = config.vnp_Url;
+        const returnUrl = config.vnp_ReturnUrl;
 
+        const orderId = moment(date).format("DDHHmmss");
+        const amount = Math.round(Number(newOrder.totalPrice) * 100);
 
-    let locale = "vn";
-    let currCode = "VND";
-    let vnp_Params = {};
-    vnp_Params["vnp_Version"] = "2.1.0";
-    vnp_Params["vnp_Command"] = "pay";
-    vnp_Params["vnp_TmnCode"] = tmnCode;
-    vnp_Params["vnp_Locale"] = locale;
-    vnp_Params["vnp_CurrCode"] = currCode;
-    vnp_Params["vnp_TxnRef"] = orderId;
-    vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + newOrder._id;
-    vnp_Params["vnp_OrderType"] = "other";
-    vnp_Params["vnp_Amount"] = amount * 100;
-    vnp_Params["vnp_ReturnUrl"] = returnUrl;
-    vnp_Params["vnp_IpAddr"] = ipAddr;
-    vnp_Params["vnp_CreateDate"] = createDate;
+        const locale = "vn";
+        const currCode = "VND";
 
-    vnp_Params = sortObject(vnp_Params);
+        let vnp_Params = {
+            vnp_Version: "2.1.0",
+            vnp_Command: "pay",
+            vnp_TmnCode: tmnCode,
+            vnp_Locale: locale,
+            vnp_CurrCode: currCode,
+            vnp_TxnRef: orderId,
+            vnp_OrderInfo: `Thanh toan cho ma GD:${newOrder._id}`,
+            vnp_OrderType: "other",
+            vnp_Amount: amount,
+            vnp_ReturnUrl: returnUrl,
+            vnp_IpAddr: ipAddr,
+            vnp_CreateDate: createDate,
+        };
 
-    let querystring = require("qs");
-    let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");
-    let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
-    vnp_Params["vnp_SecureHash"] = signed;
-    vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+        vnp_Params = sortObject(vnp_Params);
 
-    if(vnpUrl){
-        res.json({
+        const signData = qs.stringify(vnp_Params, { encode: false });
+        const hmac = crypto.createHmac("sha512", secretKey);
+        const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+        vnp_Params["vnp_SecureHash"] = signed;
+
+        const paymentUrl = vnpUrl + "?" + qs.stringify(vnp_Params, { encode: false });
+
+        return res.json({
             code: 200,
-            vnpUrl
-        })
-    } else {
-        res.json({
-            code:500,
-            Message: "Lỗi hệ thống"
-        })
+            vnpUrl: paymentUrl,
+        });
+    } catch (error) {
+        console.error("Error creating payment URL:", error);
+        return res.status(500).json({
+            code: 500,
+            message: "Lỗi hệ thống khi tạo link thanh toán",
+        });
     }
 };
 
-// Nhận kết quả redirect từ VNPAY
+// -----------------------------
+// XỬ LÝ KHI NGƯỜI DÙNG ĐƯỢC REDIRECT VỀ TỪ VNPAY
+// -----------------------------
 module.exports.paymentReturn = async (req, res) => {
-    let vnp_Params = req.query;
+    try {
+        let vnp_Params = req.query;
+        const secureHash = vnp_Params["vnp_SecureHash"];
 
-    const secureHash = vnp_Params['vnp_SecureHash'];
+        delete vnp_Params["vnp_SecureHash"];
+        delete vnp_Params["vnp_SecureHashType"];
 
-    // Xóa hash khỏi params để so sánh
-    delete vnp_Params['vnp_SecureHash'];
-    delete vnp_Params['vnp_SecureHashType'];
+        vnp_Params = sortObject(vnp_Params);
 
-    // Sắp xếp params theo thứ tự từ điển
-    vnp_Params = sortObject(vnp_Params);
+        const secretKey = config.vnp_HashSecret;
+        const signData = qs.stringify(vnp_Params, { encode: false });
+        const signed = crypto
+            .createHmac("sha512", secretKey)
+            .update(Buffer.from(signData, "utf-8"))
+            .digest("hex");
 
-    const tmnCode = config.get('vnp_TmnCode');
-    const secretKey = config.get('vnp_HashSecret');
-
-    const signData = querystring.stringify(vnp_Params, { encode: false });
-    const signed = crypto
-        .createHmac("sha512", secretKey)
-        .update(Buffer.from(signData, 'utf-8'))
-        .digest("hex");
-
-    if (secureHash === signed) {
-        // TODO: Kiểm tra dữ liệu đơn hàng trong DB (vnp_Params['vnp_TxnRef'], 'vnp_ResponseCode'...)
-
-        return res.status(200).json({
-            success: true,
-            message: 'Xác thực thành công',
-            data: {
-                vnp_ResponseCode: vnp_Params['vnp_ResponseCode'],
-                vnp_Amount: vnp_Params['vnp_Amount'],
-                vnp_TxnRef: vnp_Params['vnp_TxnRef']
-            }
-        });
-    } else {
-        return res.status(400).json({
+        if (secureHash === signed) {
+            // TODO: kiểm tra đơn hàng thực tế trong DB nếu cần
+            return res.status(200).json({
+                success: true,
+                message: "Xác thực thanh toán thành công",
+                data: {
+                    vnp_ResponseCode: vnp_Params["vnp_ResponseCode"],
+                    vnp_Amount: vnp_Params["vnp_Amount"],
+                    vnp_TxnRef: vnp_Params["vnp_TxnRef"],
+                },
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Sai chữ ký hash",
+                code: "97",
+            });
+        }
+    } catch (error) {
+        console.error("Error in paymentReturn:", error);
+        return res.status(500).json({
             success: false,
-            message: 'Sai chữ ký hash',
-            code: '97'
+            message: "Lỗi xử lý phản hồi thanh toán",
         });
     }
 };
 
-// Nhận IPN từ VNPAY
+// -----------------------------
+// XỬ LÝ IPN (THÔNG BÁO TỰ ĐỘNG TỪ VNPAY)
+// -----------------------------
 module.exports.ipnHandler = async (req, res) => {
-    console.log("IPN received:", req.query);
-    res.json({ RspCode: "00", Message: "Confirm Success" });
+    try {
+        console.log("IPN received:", req.query);
+        res.json({ RspCode: "00", Message: "Confirm Success" });
+    } catch (error) {
+        console.error("Error handling IPN:", error);
+        res.json({ RspCode: "99", Message: "Error" });
+    }
 };

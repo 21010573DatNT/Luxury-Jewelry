@@ -15,29 +15,53 @@ import * as OrderService from "../../Services/orderService"
 import { useNavigate, useParams } from "react-router-dom";
 import "./SuccessPayment.scss";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { deleteAllCart } from "../../Redux/reducers/cartUserReducer";
+import { deleteAllOrder } from "../../Redux/reducers/orderReducer";
+import * as CartService from "../../Services/cartService";
 
 const { Title, Text } = Typography;
 
 const SuccessOrder = () => {
-    const {vnp_BankCode} = useParams()
-    const {user_id} = useParams()
+    const { vnp_BankCode } = useParams()
+    // const {user_id} = useParams()
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const authUser = useSelector((state) => state.user);
     const [order, setOrder] = useState("");
-    const [user, setUser] = useState("");
+    const [customer, setCustomer] = useState("");
     const [products, setProducts] = useState([]);
 
     const NewOrder = async () => {
         const res = await OrderService.NewOrderGet()
         console.log(res)
         setOrder(res.latestOrder)
-        setUser(res.latestOrder.infoUser)
+        setCustomer(res.latestOrder.infoUser)
         setProducts(res.latestOrder.product)
     }
 
     useEffect(() => {
-        console.log("OKK")
         NewOrder();
-    },[user_id])
+        // Xóa giỏ hàng sau khi thanh toán thành công (trang thành công là điểm chung cho COD/VNPay/PayPal)
+        const clearCart = async () => {
+            try {
+                if (authUser.token) {
+                    const id = jwtDecode(authUser.token).id;
+                    await CartService.cartDeleteItem(id);
+                    dispatch(deleteAllCart());
+                } else {
+                    dispatch(deleteAllOrder());
+                }
+            } catch (e) {
+                // Không chặn UI nếu có lỗi, chỉ log
+                console.error("Clear cart after success failed:", e);
+            }
+        };
+        clearCart();
+        // chạy một lần khi vào trang
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat("vi-VN", {
@@ -88,16 +112,16 @@ const SuccessOrder = () => {
                 >
                     <Descriptions column={1} bordered size="small">
                         <Descriptions.Item label="Họ tên">
-                            {user?.name}
+                            {customer?.name}
                         </Descriptions.Item>
                         <Descriptions.Item label="Số điện thoại">
-                            {user?.phone}
+                            {customer?.phone}
                         </Descriptions.Item>
                         <Descriptions.Item label="Email">
-                            {user?.email}
+                            {customer?.email}
                         </Descriptions.Item>
                         <Descriptions.Item label="Địa chỉ giao hàng">
-                            {user?.address}
+                            {customer?.address}
                         </Descriptions.Item>
                         <Descriptions.Item label="Phương thức thanh toán">
                             {order?.payment} {vnp_BankCode}
@@ -119,7 +143,7 @@ const SuccessOrder = () => {
                                 </div>
                                 <div className="product-total">
                                     <Text strong>
-                                        {formatCurrency(item?.amount*item?.price)}
+                                        {formatCurrency(item?.amount * item?.price)}
                                     </Text>
                                 </div>
                             </div>

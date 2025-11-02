@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { InputNumber, Button, Row, Col, Card, Input } from "antd";
+import { Button, Row, Col, Card, Input, message } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import "./Cart.scss";
 import { useDispatch, useSelector } from "react-redux";
@@ -115,12 +115,19 @@ const Cart = () => {
     };
 
     const handleNavigateInfoOrder = () => {
+        // Chặn thanh toán khi giỏ hàng trống
+        if (!order || order.length === 0) {
+            message.warning(
+                "Giỏ hàng trống, vui lòng thêm sản phẩm trước khi thanh toán"
+            );
+            return;
+        }
         navigate("/info_order");
     };
 
     let shippingFee = 0
 
-    if(totalPrice) {
+    if (totalPrice) {
         shippingFee = totalPrice < 1000000 ? 35000 : 0;
         console.log(totalPrice)
         console.log(shippingFee)
@@ -247,7 +254,7 @@ const Cart = () => {
                                 }}
                                 className="no-product"
                             >
-                                <img src="/online-shopping.png" />
+                                <img src="/online-shopping.png" alt="No products" />
                                 <p>Chưa có sản phẩm nào</p>
                             </div>
                         )}
@@ -286,6 +293,7 @@ const Cart = () => {
                             block
                             type="primary"
                             className="checkout-button"
+                            disabled={!order || order.length === 0}
                             onClick={handleNavigateInfoOrder}
                         >
                             TIẾN HÀNH THANH TOÁN

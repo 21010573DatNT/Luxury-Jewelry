@@ -38,7 +38,7 @@ function Header() {
                 searchRef.current &&
                 !searchRef.current.contains(event.target)
             ) {
-                setShowSearchItem(false); 
+                setShowSearchItem(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -72,13 +72,13 @@ function Header() {
 
     const handleNavigateProduct = (product_id) => {
         navigate(`/products/detail/${product_id}`);
-        setShowSearchItem(false); 
+        setShowSearchItem(false);
     }
 
     return (
         <div className="header">
             <Row>
-                <Col span={4} className="logo">
+                <Col span={4} className="logo" onClick={() => navigate("/")}>
                     Luxury Jewelry
                 </Col>
                 <Col span={8} className="search-bar" ref={searchRef}>
@@ -96,6 +96,7 @@ function Header() {
                                 <div className="item" key={item._id} onClick={() => handleNavigateProduct(item._id)}>
                                     <img
                                         src={item.thumbnail}
+                                        alt={item.title || "product"}
                                         className="image-item"
                                     />
                                     <p className="title-item">{item.title}</p>
@@ -109,7 +110,12 @@ function Header() {
                     <a href="/products">Sản phẩm</a>
                     <a href="/about">Về chúng tôi</a>
                     <a href="/refund">Hoàn trả</a>
-                    <Avatar size="large" icon={<UserOutlined />} />
+                    <Avatar
+                        size="large"
+                        icon={<UserOutlined />}
+                        onClick={handleProfile}
+                        title="Hồ sơ của tôi"
+                    />
                     {user?.fullName ? (
                         <div className="account-logout">
                             <div onClick={handleProfile}>{user?.fullName}</div>

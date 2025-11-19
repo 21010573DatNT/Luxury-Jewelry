@@ -5,7 +5,7 @@ import Banner2 from "../../Assets/image/sliderHome/Banner2.jpg";
 import CardProduct from "../../Componets/CardProduct";
 import * as CartService from "../../Services/cartService";
 import * as ProductService from "../../Services/productService";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import {
@@ -91,6 +91,7 @@ function Home() {
                                         img={item.thumbnail}
                                         price={item.price}
                                         rate={item.rate_total}
+                                        stock={item.stock}
                                     />
                                 </div>
                             );

@@ -42,6 +42,7 @@ function RecommendProducts(prop) {
                             title={item.title}
                             price={item.price}
                             rate={item.rate_total}
+                            stock={item.stock}
                         />
                     </Col>
                 ))}

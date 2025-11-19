@@ -66,6 +66,7 @@ function ProductCategory() {
                                     img={item.thumbnail}
                                     title={item.title}
                                     price={item.price}
+                                    stock={item.stock}
                                 />
                             </Col>
                         ))}

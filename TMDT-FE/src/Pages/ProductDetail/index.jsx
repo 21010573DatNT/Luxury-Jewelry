@@ -307,15 +307,28 @@ function ProductDetail() {
                                     </div>
 
                                     {/* Trạng thái hàng */}
-                                    <span
-                                        style={{
-                                            color: "#d7263d",
-                                            fontWeight: 500,
-                                            fontSize: 15,
-                                        }}
-                                    >
-                                        Còn hàng
-                                    </span>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                        <span
+                                            style={{
+                                                color: product.stock > 0 ? "#c41a1aff" : "#ff4d4f",
+                                                fontWeight: 600,
+                                                fontSize: 15,
+                                            }}
+                                        >
+                                            {product.stock > 0 ? "Còn hàng" : "Hết hàng"}
+                                        </span>
+                                        {product.stock !== undefined && (
+                                            <span
+                                                style={{
+                                                    color: "#666",
+                                                    fontSize: 14,
+                                                    fontWeight: 500,
+                                                }}
+                                            >
+                                                Sản Phẩm có sẵn: {product.stock}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
 
@@ -323,9 +336,10 @@ function ProductDetail() {
                                     <Button
                                         type="primary"
                                         size="large"
+                                        disabled={!product.stock || product.stock <= 0}
                                         style={{
-                                            background: "#d7263d",
-                                            borderColor: "#d7263d",
+                                            background: product.stock > 0 ? "#d7263d" : "#d9d9d9",
+                                            borderColor: product.stock > 0 ? "#d7263d" : "#d9d9d9",
                                             borderRadius: 10,
                                             padding: "0 36px",
                                             fontWeight: 600,
@@ -333,14 +347,15 @@ function ProductDetail() {
                                         }}
                                         onClick={handleClickBuy}
                                     >
-                                        Mua ngay
+                                        {product.stock > 0 ? "Mua ngay" : "Hết hàng"}
                                     </Button>
                                     <Button
                                         size="large"
+                                        disabled={!product.stock || product.stock <= 0}
                                         style={{
                                             borderRadius: 10,
-                                            borderColor: "#d7263d",
-                                            color: "#d7263d",
+                                            borderColor: product.stock > 0 ? "#d7263d" : "#d9d9d9",
+                                            color: product.stock > 0 ? "#d7263d" : "#999",
                                             padding: "0 36px",
                                             fontWeight: 600,
                                             height: 48,

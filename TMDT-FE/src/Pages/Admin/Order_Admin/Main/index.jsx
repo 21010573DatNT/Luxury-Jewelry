@@ -21,6 +21,18 @@ function OrderAdmin() {
     const navigate = useNavigate();
     const permissions = TakePermissions();
 
+    const formatPrice = (price) => {
+        return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
     const getOrderSearch = async (val) => {
         const res = await OrderService.OrderSearch(val);
         setOrders(res.orders);
@@ -133,11 +145,9 @@ function OrderAdmin() {
                                 >
                                     <Col span={2}>{(index += 1)}</Col>
                                     <Col span={5}>{item.infoUser?.name}</Col>
-                                    <Col span={3}>{item.totalPrice} đ</Col>
+                                    <Col span={3}>{formatPrice(item.totalPrice)} đ</Col>
                                     <Col span={4}>
-                                        {new Date(
-                                            item.createdAt
-                                        ).toLocaleDateString()}
+                                        {formatDate(item.createdAt)}
                                     </Col>
                                     <Col span={4}>{item.status || ""}</Col>
                                     <Col span={6}>

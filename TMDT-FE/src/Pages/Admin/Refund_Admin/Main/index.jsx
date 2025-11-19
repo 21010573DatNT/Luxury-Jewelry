@@ -18,6 +18,14 @@ function RefundAdmin() {
     const navigate = useNavigate();
     const permissions = TakePermissions();
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
     useEffect(() => {
         const RefundsGet = async () => {
             const res = await RefundService.RefundGet();
@@ -96,9 +104,7 @@ function RefundAdmin() {
                                     <Col span={5}>{item.customerName}</Col>
                                     <Col span={3}>{item.returnType}</Col>
                                     <Col span={4}>
-                                        {new Date(
-                                            item.createdAt
-                                        ).toLocaleDateString()}
+                                        {formatDate(item.createdAt)}
                                     </Col>
                                     <Col span={4}>{item.status || ""}</Col>
                                     <Col span={6}>

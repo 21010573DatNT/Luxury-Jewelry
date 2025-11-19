@@ -84,6 +84,21 @@ module.exports.delete = async (req, res) => {
 module.exports.register = async (req, res) => {
     req.body.password = req.body.password;
 
+    // Validate password strength: 8-15 chars, lower, upper, number, special
+    try {
+        const password = String(req.body.password || "");
+        const strongPwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,15}$/;
+        if (!strongPwRegex.test(password)) {
+            return res.json({
+                code: 400,
+                message:
+                    "Mật khẩu phải từ 8-15 ký tự và bao gồm số, chữ thường, chữ in hoa và ký tự đặc biệt.",
+            });
+        }
+    } catch (e) {
+        return res.json({ code: 400, message: "Mật khẩu không hợp lệ" });
+    }
+
     const existEmail = await User.findOne({
         email: req.body.email,
         deleted: false,

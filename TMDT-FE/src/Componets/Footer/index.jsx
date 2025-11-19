@@ -53,16 +53,16 @@ function Footer() {
                 <div className="footer-column">
                     <h4>Về chúng tôi</h4>
                     <ul>
-                        <li>Về Pandora</li>
-                        <li>Câu chuyện Pandora</li>
-                        <li>Về Tập Đoàn Norbreeze</li>
+                        <li>Về luxury jewelry</li>
+                        <li>Câu chuyện luxury jewelry</li>
+                        <li>Về Tập Đoàn luxury jewelry</li>
                         <li>Tuyển dụng</li>
                         <li>Liên hệ</li>
                     </ul>
                 </div>
             </div>
             <div className="footer-bottom">
-                <p>© Pandora Jewelry, LLC. All rights reserved.</p>
+                <p>© luxury jewelry, LLC. All rights reserved.</p>
                 <div className='contact-icon'>
                     <FacebookOutlined style={{ fontSize: '24px' }} />
                     <InstagramOutlined style={{ fontSize: '24px' }} />

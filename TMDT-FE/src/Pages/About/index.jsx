@@ -126,7 +126,7 @@ export default function AboutPage() {
                 <h3 className="story__title">Câu Chuyện Của Chúng Tôi</h3>
                 <div className="story__content">
                   <p>
-                    Được thành lập vào năm 2009 bởi nghệ nhân Hà Tiến Duy, Luxury Jewelry bắt đầu 
+                    Được thành lập vào năm 2009 bởi nghệ nhân Nguyễn Thành Đạt, Luxury Jewelry bắt đầu 
                     từ một xưởng nhỏ với ước mơ tạo ra những món trang sức đẹp nhất cho phụ nữ Việt Nam.
                   </p>
                   <p>

@@ -20,17 +20,17 @@ function Register() {
                 email: values.email,
                 password: values.password
             }
-            
+
             const res = await UserService.RegisterUser(data)
 
-            if(res.code === 200) {
+            if (res.code === 200) {
                 message.success('Đăng ký thành công!');
                 navigate("/login")
             } else {
-                message.error('Email đã tồn tại!');
+                message.error(res?.message || 'Đăng ký thất bại!');
             }
         } catch (error) {
-            message.error('Đăng ký thất bại. Vui lòng thử lại!');
+            message.error(error?.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại!');
         } finally {
             setLoading(false);
         }
@@ -111,7 +111,12 @@ function Register() {
                         label="Mật khẩu"
                         rules={[
                             { required: true, message: 'Vui lòng nhập mật khẩu!' },
-                            { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự!' }
+                            { min: 8, message: 'Mật khẩu phải có ít nhất 8 ký tự!' },
+                            { max: 15, message: 'Mật khẩu không vượt quá 15 ký tự!' },
+                            {
+                                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,15}$/,
+                                message: 'Mật khẩu phải gồm số, chữ thường, chữ in hoa và ký tự đặc biệt!'
+                            }
                         ]}
                     >
                         <Input.Password
@@ -167,10 +172,10 @@ function Register() {
                 <div style={{ textAlign: 'center', marginTop: '24px' }}>
                     <Text type="secondary">
                         Đã có tài khoản? {' '}
-                        <a 
-                            href="/login" 
-                            style={{ 
-                                color: '#667eea', 
+                        <a
+                            href="/login"
+                            style={{
+                                color: '#667eea',
                                 fontWeight: '500',
                                 textDecoration: 'none'
                             }}

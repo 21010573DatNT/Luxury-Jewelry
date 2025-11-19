@@ -23,6 +23,9 @@ const UserProfile = () => {
     const [addressApi, setAddressApi] = useState();
     const [province, setProvince] = useState();
     const [district, setDistrict] = useState();
+    const [selectedProvince, setSelectedProvince] = useState("");
+    const [selectedDistrict, setSelectedDistrict] = useState("");
+    const [selectedCommune, setSelectedCommune] = useState("");
     const user = useSelector((state) => state.user);
     let decode = null;
     try {
@@ -35,6 +38,7 @@ const UserProfile = () => {
 
     const [formData, setFormData] = useState({
         address: user?.address,
+        street: "",
     });
 
     const userInfo = {
@@ -54,30 +58,52 @@ const UserProfile = () => {
         fetchDataAddress();
     }, []);
 
-    const handleChangeProvince = (e) => {
-        setFormData((prev) => ({
-            ...prev,
-            address: "" + e + " / ",
-        }));
-        const result = addressApi.filter((item) => item.name === e);
+    const composeAddress = (street, p, d, c) => {
+        const parts = [];
+        if (p) parts.push(p);
+        if (d) parts.push(d);
+        if (c) parts.push(c);
+        if (street) parts.push(street);
+        return parts.join(" / ");
+    };
+
+    const updateAddressField = (next = {}) => {
+        const street = next.street ?? formData.street;
+        const p = next.selectedProvince ?? selectedProvince;
+        const d = next.selectedDistrict ?? selectedDistrict;
+        const c = next.selectedCommune ?? selectedCommune;
+        const address = composeAddress(street, p, d, c);
+        setFormData((prev) => ({ ...prev, street, address }));
+        form.setFieldsValue({ address });
+    };
+
+    const handleChangeProvince = (value) => {
+        setSelectedProvince(value);
+        const result = addressApi.filter((item) => item.name === value);
         setProvince(result[0]);
+        // reset dependent selections
+        setSelectedDistrict("");
+        setSelectedCommune("");
+        setDistrict(undefined);
+        updateAddressField({ selectedProvince: value, selectedDistrict: "", selectedCommune: "" });
     };
 
-    const handleChangeDistrict = (e) => {
-        setFormData((prev) => ({
-            ...prev,
-            address: prev.address + e + " / ",
-        }));
-        const result = province.districts.filter((item) => item.name === e);
+    const handleChangeDistrict = (value) => {
+        setSelectedDistrict(value);
+        const result = province.districts.filter((item) => item.name === value);
         setDistrict(result[0]);
+        setSelectedCommune("");
+        updateAddressField({ selectedDistrict: value, selectedCommune: "" });
     };
 
-    const handleChangeCommune = (e) => {
-        setFormData((prev) => ({
-            ...prev,
-            address: prev.address + e,
-        }));
-        form.setFieldsValue({ address: formData.address + e });
+    const handleChangeCommune = (value) => {
+        setSelectedCommune(value);
+        updateAddressField({ selectedCommune: value });
+    };
+
+    const handleChangeStreet = (e) => {
+        const value = e.target.value;
+        updateAddressField({ street: value });
     };
 
     const handleEdit = () => {
@@ -229,6 +255,12 @@ const UserProfile = () => {
                                     value: address.name,
                                     label: address.name,
                                 }))}
+                            />
+                            <Input
+                                placeholder="Số nhà, tên đường ..."
+                                style={{ width: 500, marginTop: 12 }}
+                                onChange={handleChangeStreet}
+                                value={formData.street}
                             />
                             <Input.TextArea
                                 rows={3}

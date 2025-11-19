@@ -26,6 +26,15 @@ function RefundAdmin() {
         return `${day}/${month}/${year}`;
     };
 
+    const translateStatus = (status) => {
+        const statusMap = {
+            'Refunded': 'Đã hoàn trả',
+            'Pending': 'Chờ xử lý',
+            'Rejected': 'Từ chối'
+        };
+        return statusMap[status] || status;
+    };
+
     useEffect(() => {
         const RefundsGet = async () => {
             const res = await RefundService.RefundGet();
@@ -106,7 +115,7 @@ function RefundAdmin() {
                                     <Col span={4}>
                                         {formatDate(item.createdAt)}
                                     </Col>
-                                    <Col span={4}>{item.status || ""}</Col>
+                                    <Col span={4}>{translateStatus(item.status) || ""}</Col>
                                     <Col span={6}>
                                         <Button
                                             icon={<EyeOutlined />}

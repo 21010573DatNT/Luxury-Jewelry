@@ -33,6 +33,16 @@ function OrderAdmin() {
         return `${day}/${month}/${year}`;
     };
 
+    const translateStatus = (status) => {
+        const statusMap = {
+            'finish': 'Hoàn thành',
+            'shipping': 'Đang giao',
+            'waiting': 'Chờ xử lý',
+            'refund': 'Hoàn trả'
+        };
+        return statusMap[status] || status;
+    };
+
     const getOrderSearch = async (val) => {
         const res = await OrderService.OrderSearch(val);
         setOrders(res.orders);
@@ -149,7 +159,7 @@ function OrderAdmin() {
                                     <Col span={4}>
                                         {formatDate(item.createdAt)}
                                     </Col>
-                                    <Col span={4}>{item.status || ""}</Col>
+                                    <Col span={4}>{translateStatus(item.status) || ""}</Col>
                                     <Col span={6}>
                                         <Button
                                             icon={<EyeOutlined />}

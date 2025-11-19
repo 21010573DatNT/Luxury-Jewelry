@@ -19,6 +19,16 @@ const OrderUser = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const user = useSelector((state) => state.user);
+
+    const translateStatus = (status) => {
+        const statusMap = {
+            'finish': 'Hoàn thành',
+            'shipping': 'Đang giao',
+            'waiting': 'Chờ xử lý',
+            'refund': 'Hoàn trả'
+        };
+        return statusMap[status] || status;
+    };
     let decode = null;
     try {
         if (user && user.token && user.token.split('.').length === 3) {
@@ -29,14 +39,13 @@ const OrderUser = () => {
     }
     const [orders, setOrders] = useState([]);
 
-    const OrderUser = async () => {
-        const res = await OrderService.OrderOfUser(decode.id);
-        setOrders(res.listOrderUser);
-    };
-
     useEffect(() => {
+        const OrderUser = async () => {
+            const res = await OrderService.OrderOfUser(decode.id);
+            setOrders(res.listOrderUser);
+        };
         OrderUser();
-    }, []);
+    }, [decode?.id]);
 
     const showOrderDetail = (order) => {
         setSelectedOrder(order);
@@ -113,7 +122,7 @@ const OrderUser = () => {
                                                     : "orange"
                                     }
                                 >
-                                    {order.status}
+                                    {translateStatus(order.status)}
                                 </Tag>
                             </Col>
                             <Col span={6}>
@@ -187,7 +196,7 @@ const OrderUser = () => {
                                                         : "orange"
                                         }
                                     >
-                                        {selectedOrder.status}
+                                        {translateStatus(selectedOrder.status)}
                                     </Tag>
                                 </div>
                             </div>

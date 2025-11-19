@@ -68,7 +68,7 @@ const CardProducts = (props) => {
                         marginTop: '8px',
                         fontSize: '13px',
                         fontWeight: 500,
-                        color: stock > 0 ? '#52c41a' : '#ff4d4f'
+                        color: stock > 0 ? '#c41a1aff' : '#ff4d4f'
                     }}>
                         {stock > 0 ? `Còn ${stock} sản phẩm` : 'Hết hàng'}
                     </div>

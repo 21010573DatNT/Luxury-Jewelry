@@ -1,4 +1,4 @@
-import { Form, Input,Select,Col,Row,Button,message } from "antd";
+import { Form, Input, Select, Col, Row, Button, message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as OrderService from "../../../../Services/orderService";
@@ -8,25 +8,32 @@ function Order_Edit() {
     const { order_id } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
-    const [user,setUser] = useState({});
-    const [loading,setLoading] = useState(true)
+    const [user, setUser] = useState({});
+    const [loading, setLoading] = useState(true)
 
     const fetchOrder = async () => {
         const res = await OrderService.OrderDetail(order_id);
         setOrder(res.order);
-        setUser(res.order.infoUser)
-        setLoading(false)
+        setUser(res.order.infoUser);
+        setLoading(false);
     };
 
     const handleSubmit = async (values) => {
-        const res = await OrderService.OrderEdit(order_id,values);
+        // Chỉ cập nhật trạng thái để tránh gửi các trường readOnly đã format
+        const payload = { status: values.status };
+        const res = await OrderService.OrderEdit(order_id, payload);
         if (res.code === 200) {
             message.success("Cập nhật thành công!");
             navigate(`/admin/order`);
         } else {
             message.error("Cập nhật thất bại!");
         }
-    }
+    };
+
+    const formatPrice = (price) => {
+        if (price === undefined || price === null) return "";
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
 
     useEffect(() => {
         fetchOrder();
@@ -51,17 +58,17 @@ function Order_Edit() {
             }}
             onFinish={handleSubmit}
         >
-            <Form.Item label="Tên khách hàng" name="name" >
-                <Input disabled />
+            <Form.Item label="Tên khách hàng" name="name">
+                <Input readOnly />
             </Form.Item>
-            <Form.Item label="Địa chỉ" name="address" >
-                <Input disabled />
+            <Form.Item label="Địa chỉ" name="address">
+                <Input readOnly />
             </Form.Item>
-            <Form.Item label="Điện thoại" name="phone" >
-                <Input disabled />
+            <Form.Item label="Điện thoại" name="phone">
+                <Input readOnly />
             </Form.Item>
-            <Form.Item label="Email" name="email" >
-                <Input disabled />
+            <Form.Item label="Email" name="email">
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Trạng thái" name="status" >
                 <Select >
@@ -71,8 +78,8 @@ function Order_Edit() {
                     <Option value="refund">Hoàn trả</Option>
                 </Select>
             </Form.Item>
-            <div> 
-                <p style={{marginBottom:20}}>Danh sách sản phẩm</p>
+            <div>
+                <p style={{ marginBottom: 20 }}>Danh sách sản phẩm</p>
                 <Row className="product-grid-header" gutter={0}>
                     <Col span={6}>
                         <b>Ảnh</b>
@@ -118,17 +125,17 @@ function Order_Edit() {
                             </Col>
                             <Col span={12}>{item.name}</Col>
                             <Col span={6}>{item.amount}</Col>
-                            
+
                         </Row>
                     ))
                 )}
             </div>
 
-            <Form.Item label="Tổng hóa đơn" name="totalPrice" style={{marginTop:20}} >
-                <Input disabled />
+            <Form.Item label="Tổng hóa đơn" name="totalPrice" style={{ marginTop: 20 }}>
+                <Input readOnly value={`${formatPrice(order?.totalPrice)} đ`} />
             </Form.Item>
-            <Form.Item label="Phương thức thanh toán" name="payment" >
-                <Input disabled />
+            <Form.Item label="Phương thức thanh toán" name="payment">
+                <Input readOnly />
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit">

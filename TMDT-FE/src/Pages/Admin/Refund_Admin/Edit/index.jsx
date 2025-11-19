@@ -26,7 +26,7 @@ function Refund_Edit() {
         const res = await RefundService.RefundEdit(refund_id, data);
         if (res.code === 200) {
             const res = await RefundService.RefundSendMail(refund.email)
-            if(res.success === true) {
+            if (res.success === true) {
                 message.success("Cập nhật thành công!");
                 navigate(`/admin/refund`);
             }
@@ -59,19 +59,19 @@ function Refund_Edit() {
             }}
         >
             <Form.Item label="Tên khách hàng" name="name">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Điện thoại" name="phone">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Email" name="email">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Lý do" name="reason">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Mô tả chi tiết" name="description">
-                <TextArea disabled />
+                <TextArea readOnly />
             </Form.Item>
             <Form.Item label="Trạng thái" name="status">
                 <Select>

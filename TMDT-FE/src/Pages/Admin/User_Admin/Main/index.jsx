@@ -17,6 +17,14 @@ function UserAdmin() {
     const navigate = useNavigate();
     const permissions = TakePermissions();
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
     const getUserSearch = async (val) => {
         const res = await UserService.UserSearch(val);
         setUsers(res.users);
@@ -106,11 +114,7 @@ function UserAdmin() {
                                     <Col span={3}>{item.email}</Col>
                                     <Col span={4}>{item.phone}</Col>
                                     <Col span={6}>{item.address}</Col>
-                                    <Col span={3}>
-                                        {new Date(
-                                            item.createdAt
-                                        ).toLocaleDateString()}
-                                    </Col>
+                                    <Col span={3}>{formatDate(item.createdAt)}</Col>
                                     <Col span={3}>
                                         <Button
                                             icon={<EyeOutlined />}

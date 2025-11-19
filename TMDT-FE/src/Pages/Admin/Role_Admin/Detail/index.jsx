@@ -39,16 +39,16 @@ function Role_Detail() {
             initialValues={{
                 title: role?.title,
                 description: role?.description,
-                permissions: role?.permissions,  
+                permissions: role?.permissions,
             }}
             onFinish={handleSubmit}
         >
             <Form.Item label="Tên quyền" name="title">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
 
             <Form.Item label="Mô tả" name="description">
-                <TextArea disabled />
+                <TextArea readOnly />
             </Form.Item>
 
             <Form.Item label="Quyền" >
@@ -59,11 +59,12 @@ function Role_Detail() {
                                 <Col span={12}>
                                     <strong>{permission}</strong>
                                 </Col>
-                                    <Col span={12}>
+                                <Col span={12}>
                                     <Checkbox
                                         value={permission}
-                                        defaultChecked={role?.permissions.includes(permission)} 
-                                        disabled
+                                        defaultChecked={role?.permissions.includes(permission)}
+                                        disabled={true}
+                                        style={{ pointerEvents: 'none', opacity: 1 }}
                                     />
                                 </Col>
                             </Row>

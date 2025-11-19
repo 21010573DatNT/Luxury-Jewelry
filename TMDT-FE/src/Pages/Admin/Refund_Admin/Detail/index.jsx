@@ -21,6 +21,12 @@ function Refund_Detail() {
         setLoading(false);
     };
 
+    const getStatusInVietnamese = (status) => {
+        if (status === "Refunding") return "Đang hoàn trả";
+        if (status === "Refunded") return "Đã hoàn trả";
+        return status;
+    };
+
     useEffect(() => {
         RefundDetail();
     }, []);
@@ -37,32 +43,29 @@ function Refund_Detail() {
                 phone: refund?.phone,
                 email: refund?.email,
                 description: refund?.description,
-                status: refund?.status || "",
+                status: getStatusInVietnamese(refund?.status),
                 reason: refund?.reason,
                 images: refund?.images,
                 products: products,
             }}
         >
             <Form.Item label="Tên khách hàng" name="name">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Điện thoại" name="phone">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Email" name="email">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Lý do" name="reason">
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Mô tả chi tiết" name="description">
-                <TextArea disabled />
+                <TextArea readOnly />
             </Form.Item>
             <Form.Item label="Trạng thái" name="status">
-                <Select disabled>
-                    <Option value="Refunding">Đang hoàn trả</Option>
-                    <Option value="Refunded">Đã hoàn trả</Option>
-                </Select>
+                <Input readOnly />
             </Form.Item>
             <div>
                 <p style={{ marginBottom: 20 }}>Danh sách sản phẩm</p>
@@ -115,7 +118,7 @@ function Refund_Detail() {
                     ))
                 )}
             </div>
-            <Form.Item label="Ảnh lỗi sản phẩm" name="images" style={{marginTop:30}}>
+            <Form.Item label="Ảnh lỗi sản phẩm" name="images" style={{ marginTop: 30 }}>
                 {images.length === 0 ? (
                     <span >Không có ảnh</span>
                 ) : (
@@ -128,8 +131,8 @@ function Refund_Detail() {
                                 width: 120,
                                 marginRight: 8,
                                 marginBottom: 8,
-                                marginRight:40,
-                                marginTop:30
+                                marginRight: 40,
+                                marginTop: 30
                             }}
                         />
                     ))

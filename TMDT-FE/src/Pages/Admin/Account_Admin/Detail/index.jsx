@@ -1,4 +1,4 @@
-import { Form, Input,Select,Col,Row } from "antd";
+import { Form, Input, Select, Col, Row } from "antd";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as AccountService from "../../../../Services/accountService";
@@ -7,7 +7,7 @@ const { Option } = Select;
 function Account_Detail() {
     const { account_id } = useParams();
     const [account, setAccount] = useState(null);
-    const [loading,setLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
     const fetchAccount = async () => {
         const res = await AccountService.AccountDetail(account_id);
@@ -35,19 +35,19 @@ function Account_Detail() {
             }}
         >
             <Form.Item label="Tên tài khoản" name="name" >
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Điện thoại" name="phone" >
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Email" name="email" >
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Mật khẩu" name="password" >
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Quyền" name="role" >
-                <Input disabled />
+                <Input readOnly />
             </Form.Item>
         </Form>
     );

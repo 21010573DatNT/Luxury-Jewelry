@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu, Button} from "antd";
+import { Layout, Menu, Button } from "antd";
 import {
     DashboardOutlined,
     ShoppingOutlined,
@@ -33,7 +33,6 @@ function Admin() {
         <Layout className="admin-layout">
             <Sider trigger={null} width={250}>
                 <div className="logo">{account.fullName}</div>
-                <Button onClick={handleLogout} style={{width:"100%"}}>Đăng xuất</Button>
                 <Menu
                     theme="dark"
                     mode="inline"
@@ -82,6 +81,7 @@ function Admin() {
                         },
                     ]}
                 />
+                <Button onClick={handleLogout} className="logout-button">Đăng xuất</Button>
             </Sider>
             <Layout>
                 <Content className="admin-content">

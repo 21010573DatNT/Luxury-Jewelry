@@ -30,7 +30,12 @@ function RefundAdmin() {
         const statusMap = {
             'Refunded': 'Đã hoàn trả',
             'Pending': 'Chờ xử lý',
-            'Rejected': 'Từ chối'
+            'Rejected': 'Từ chối',
+            'Refunding': 'Đang hoàn trả',
+            'refunding': 'Đang hoàn trả',
+            'pending': 'Chờ xử lý',
+            'refunded': 'Đã hoàn trả',
+            'rejected': 'Từ chối'
         };
         return statusMap[status] || status;
     };

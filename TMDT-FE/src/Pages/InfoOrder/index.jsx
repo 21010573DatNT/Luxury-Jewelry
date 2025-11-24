@@ -1,9 +1,10 @@
 import "./InfoOrder.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, Input, Radio } from "antd";
+import { Row, Col, Input, Radio, Select, Checkbox } from "antd";
 import { Form, message } from "antd";
 import { useEffect, useState } from "react";
 import { PayPalButton } from "react-paypal-button-v2";
+import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { deleteAllCart } from "../../Redux/reducers/cartUserReducer";
@@ -13,6 +14,7 @@ import * as OrderService from "../../Services/orderService";
 import * as ProductService from "../../Services/productService";
 import * as ActionUserService from "../../Services/actionUserService";
 import * as VnpayService from "../../Services/vnpayService";
+import * as UserService from "../../Services/userService";
 const { TextArea } = Input;
 
 const InfoOrder = () => {
@@ -28,21 +30,135 @@ const InfoOrder = () => {
     const [canSubmit, setCanSubmit] = useState(false);
     const [form] = Form.useForm();
 
+    // Address selection states
+    const [addressApi, setAddressApi] = useState();
+    const [province, setProvince] = useState();
+    const [district, setDistrict] = useState();
+    const [selectedProvince, setSelectedProvince] = useState("");
+    const [selectedDistrict, setSelectedDistrict] = useState("");
+    const [selectedCommune, setSelectedCommune] = useState("");
+    const [street, setStreet] = useState("");
+    const [fullAddress, setFullAddress] = useState("");
+    // Agreement states
+    const [agreePolicy, setAgreePolicy] = useState(false);
+    const [agreeMarketing, setAgreeMarketing] = useState(false);
+
     useEffect(() => {
         if (user.token) {
             setUserId(jwtDecode(user.token).id);
             setItemOrder(cartUser.cartItems);
+
+            // Fetch latest user profile to get updated address
+            const fetchUserProfile = async () => {
+                try {
+                    const decoded = jwtDecode(user.token);
+                    const res = await UserService.ProfileUser(decoded.id, user.token);
+                    console.log("Fetched user profile:", res);
+                    if (res && res.address) {
+                        setFullAddress(res.address);
+                        form.setFieldsValue({ address: res.address });
+                    }
+                } catch (error) {
+                    console.error("Error fetching user profile:", error);
+                }
+            };
+            fetchUserProfile();
         } else {
             setUserId("");
             setItemOrder(order.orderItems);
         }
-    }, [user.token, cartUser.cartItems, order.orderItems]); // Thêm dependencies
+
+        // Debug: kiểm tra user object
+        console.log("User object:", user);
+        console.log("User address:", user.address);
+    }, [user, cartUser.cartItems, order.orderItems, form]); // Thêm dependencies
+
+    // Load địa chỉ cũ từ user profile khi component mount hoặc user.address thay đổi
+    useEffect(() => {
+        console.log("UseEffect triggered, user.address:", user.address);
+        if (user.address) {
+            console.log("Setting address from user:", user.address);
+            setFullAddress(user.address);
+            form.setFieldsValue({ address: user.address });
+        } else {
+            console.log("No address found in user object");
+        }
+    }, [user.address, form]);
+
+    // Fetch address data
+    useEffect(() => {
+        const fetchDataAddress = async () => {
+            const res = await axios.get(
+                "https://provinces.open-api.vn/api/?depth=3"
+            );
+            setAddressApi(res.data);
+        };
+        fetchDataAddress();
+    }, []);
 
     const totalPrice =
         itemOrder?.reduce(
             (total, item) => total + item.price * item.amount,
             0
         ) || 0;
+
+    // Compose full address from parts với giá trị mới
+    const composeAddress = (newStreet, newCommune, newDistrict, newProvince) => {
+        const parts = [];
+        const st = newStreet !== undefined ? newStreet : street;
+        const co = newCommune !== undefined ? newCommune : selectedCommune;
+        const di = newDistrict !== undefined ? newDistrict : selectedDistrict;
+        const pr = newProvince !== undefined ? newProvince : selectedProvince;
+
+        if (st) parts.push(st);
+        if (co) parts.push(co);
+        if (di) parts.push(di);
+        if (pr) parts.push(pr);
+        const address = parts.join(", ");
+        setFullAddress(address);
+        return address;
+    };
+
+    // Handle province selection
+    const handleChangeProvince = (value) => {
+        setSelectedProvince(value);
+        const result = addressApi.filter((item) => item.name === value);
+        setProvince(result[0]);
+        setSelectedDistrict("");
+        setSelectedCommune("");
+        setDistrict(undefined);
+        // Tính địa chỉ mới với province vừa chọn, reset district và commune
+        const fullAddress = composeAddress(street, "", "", value);
+        form.setFieldsValue({ address: fullAddress });
+    };
+
+    // Handle district selection
+    const handleChangeDistrict = (value) => {
+        setSelectedDistrict(value);
+        const result = province.districts.filter((item) => item.name === value);
+        setDistrict(result[0]);
+        setSelectedCommune("");
+        // Tính địa chỉ mới với district vừa chọn, reset commune
+        const fullAddress = composeAddress(street, "", value, selectedProvince);
+        form.setFieldsValue({ address: fullAddress });
+    };
+
+    // Handle commune selection
+    const handleChangeCommune = (value) => {
+        setSelectedCommune(value);
+        // Tính địa chỉ mới với commune vừa chọn
+        const fullAddress = composeAddress(street, value, selectedDistrict, selectedProvince);
+        form.setFieldsValue({ address: fullAddress });
+    };
+
+    // Handle street input
+    const handleChangeStreet = (e) => {
+        const value = e.target.value;
+        setStreet(value);
+        // Tính địa chỉ mới với street vừa nhập
+        const fullAddress = composeAddress(value, selectedCommune, selectedDistrict, selectedProvince);
+        form.setFieldsValue({ address: fullAddress });
+    };
 
 
     const recomputeSubmitState = (nextPayment) => {
@@ -51,7 +167,10 @@ const InfoOrder = () => {
         const noErrors = form.getFieldsError().every((f) => f.errors.length === 0);
         const chosenInput = typeof nextPayment === "string" ? nextPayment : undefined;
         const chosen = chosenInput !== undefined ? chosenInput : payment;
-        setCanSubmit(Boolean(requiredOK && noErrors && chosen));
+        // yêu cầu phải tick đồng ý chính sách
+        const newCanSubmit = Boolean(requiredOK && noErrors && chosen && agreePolicy);
+        setCanSubmit(newCanSubmit);
+        return newCanSubmit;
     };
 
     const handlePayment = (e) => {
@@ -65,7 +184,16 @@ const InfoOrder = () => {
     useEffect(() => {
         recomputeSubmitState();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [payment]);
+    }, [payment, agreePolicy]);
+
+    // Thêm useEffect để recompute khi form values thay đổi
+    useEffect(() => {
+        const fields = form.getFieldsValue();
+        if (fields) {
+            recomputeSubmitState();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [form]);
 
     const data = {
         user_id: userId,
@@ -84,13 +212,22 @@ const InfoOrder = () => {
             totalPrice,
             payment: paymentMethod,
             status: "waiting",
+            agreeMarketing: agreeMarketing,
         };
 
         const res = await VnpayService.VnPayCreate(data);
         if (res.code === 200) {
             await ActionUserService.UserAction(data);
             await ProductService.updateStock(itemOrder);
+
+            // Save address and phone to user profile if logged in
             if (userId) {
+                await UserService.updateUser(userId, {
+                    address: infoUser.address,
+                    phone: infoUser.phone,
+                    name: infoUser.name,
+                    email: infoUser.email
+                });
                 dispatch(deleteAllCart());
             } else {
                 dispatch(deleteAllOrder());
@@ -114,6 +251,10 @@ const InfoOrder = () => {
             message.error("Vui lòng chọn phương thức thanh toán");
             return;
         }
+        if (!agreePolicy) {
+            message.error("Vui lòng đồng ý với chính sách và điều khoản");
+            return;
+        }
 
         setIsLoading(true);
         try {
@@ -126,12 +267,21 @@ const InfoOrder = () => {
                     totalPrice,
                     payment: paymentMethod,
                     status: "waiting",
+                    agreeMarketing: agreeMarketing,
                 };
                 const res = await OrderService.CashOnDelivery(data);
                 if (res.code === 200) {
                     await ActionUserService.UserAction(data);
                     await ProductService.updateStock(itemOrder);
+
+                    // Save address and phone to user profile if logged in
                     if (userId) {
+                        await UserService.updateUser(userId, {
+                            address: infoUser.address,
+                            phone: infoUser.phone,
+                            name: infoUser.name,
+                            email: infoUser.email
+                        });
                         dispatch(deleteAllCart());
                     } else {
                         dispatch(deleteAllOrder());
@@ -155,7 +305,16 @@ const InfoOrder = () => {
         setIsLoading(true);
         try {
             await ActionUserService.UserAction(data);
-            if (user.fullName) {
+
+            // Save address and phone to user profile if logged in
+            const infoUser = form.getFieldsValue();
+            if (user.fullName && userId) {
+                await UserService.updateUser(userId, {
+                    address: infoUser.address,
+                    phone: infoUser.phone,
+                    name: infoUser.name,
+                    email: infoUser.email
+                });
                 await CartService.cartDeleteItem(userId);
                 dispatch(deleteAllCart());
             } else {
@@ -186,7 +345,10 @@ const InfoOrder = () => {
                             form={form}
                             layout="vertical"
                             onFinish={hanldeSubmit}
-                            onValuesChange={() => recomputeSubmitState()}
+                            onValuesChange={() => {
+                                // Delay để đảm bảo form đã cập nhật values
+                                setTimeout(() => recomputeSubmitState(), 0);
+                            }}
                             autoComplete="off"
                         >
                             <div className="order-form-group">
@@ -213,7 +375,6 @@ const InfoOrder = () => {
                                 <Form.Item
                                     label="Địa chỉ giao hàng *"
                                     name="address"
-                                    initialValue={user.address}
                                     rules={[
                                         {
                                             required: true,
@@ -222,10 +383,61 @@ const InfoOrder = () => {
                                         },
                                     ]}
                                 >
-                                    <Input
+                                    <div style={{ marginBottom: 12 }}>
+                                        <Select
+                                            showSearch
+                                            placeholder="Chọn Tỉnh/Thành phố"
+                                            style={{ width: "100%", marginBottom: 8 }}
+                                            onChange={handleChangeProvince}
+                                            value={selectedProvince || undefined}
+                                            options={addressApi?.map((address) => ({
+                                                value: address.name,
+                                                label: address.name,
+                                            }))}
+                                        />
+                                        <Select
+                                            showSearch
+                                            placeholder="Chọn Quận/Huyện"
+                                            style={{ width: "100%", marginBottom: 8 }}
+                                            onChange={handleChangeDistrict}
+                                            value={selectedDistrict || undefined}
+                                            disabled={!selectedProvince}
+                                            options={province?.districts?.map(
+                                                (address) => ({
+                                                    value: address.name,
+                                                    label: address.name,
+                                                })
+                                            )}
+                                        />
+                                        <Select
+                                            showSearch
+                                            placeholder="Chọn Xã/Phường"
+                                            style={{ width: "100%", marginBottom: 8 }}
+                                            onChange={handleChangeCommune}
+                                            value={selectedCommune || undefined}
+                                            disabled={!selectedDistrict}
+                                            options={district?.wards?.map((address) => ({
+                                                value: address.name,
+                                                label: address.name,
+                                            }))}
+                                        />
+                                        <Input
+                                            placeholder="Số nhà, tên đường"
+                                            style={{ width: "100%" }}
+                                            onChange={handleChangeStreet}
+                                            value={street}
+                                        />
+                                    </div>
+                                    <Input.TextArea
                                         className="order-form-input"
-                                        placeholder="Nhập địa chỉ chi tiết..."
+                                        placeholder="Địa chỉ đầy đủ (tự động tạo hoặc nhập thủ công)"
                                         size="large"
+                                        rows={2}
+                                        value={fullAddress}
+                                        onChange={(e) => {
+                                            setFullAddress(e.target.value);
+                                            form.setFieldsValue({ address: e.target.value });
+                                        }}
                                     />
                                 </Form.Item>
                             </div>
@@ -380,6 +592,35 @@ const InfoOrder = () => {
                             </Radio.Group>
                         </div>
 
+                        {/* Agreement Checkboxes */}
+                        <div className="agreement-section">
+                            <h5 className="agreement-heading">Điều khoản & Đồng ý</h5>
+
+                            <label className="agreement-item">
+                                <Checkbox
+                                    checked={agreePolicy}
+                                    onChange={(e) => {
+                                        setAgreePolicy(e.target.checked);
+                                        recomputeSubmitState();
+                                    }}
+                                />
+                                <span className="agreement-text">
+                                    Tôi đồng ý cho Luxury Jewelry thu thập và xử lý dữ liệu cá nhân theo quy định của pháp luật.
+                                </span>
+                            </label>
+
+                            <label className="agreement-item optional">
+                                <Checkbox
+                                    checked={agreeMarketing}
+                                    onChange={(e) => setAgreeMarketing(e.target.checked)}
+                                />
+                                <span className="agreement-text">
+                                    Tôi đồng ý nhận email / SMS về ưu đãi và khuyến mãi của Luxury Jewelry
+                                    <span className="agreement-detail">(Không bắt buộc)</span>
+                                </span>
+                            </label>
+                        </div>
+
                         {/* Payment Button or PayPal */}
                         {payment === "paypal" ? (
                             <div className="paypal-button-wrapper">
@@ -426,6 +667,7 @@ const InfoOrder = () => {
                                                             totalPrice,
                                                             payment,
                                                             status: "waiting",
+                                                            agreeMarketing: agreeMarketing,
                                                         }),
                                                     }
                                                 )

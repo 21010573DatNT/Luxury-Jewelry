@@ -5,9 +5,17 @@
         align-items: center;
         margin-bottom: 20px;
     }
+
     &__search {
         margin-bottom: 16px;
     }
+
+    &__pagination {
+        margin-top: 24px;
+        display: flex;
+        justify-content: center;
+    }
+
     &__table {
         background: #fff;
         padding: 16px;
@@ -23,16 +31,19 @@
     padding: 12px 0;
     border-bottom: 1.5px solid rgba(180, 190, 210, 0.18);
 }
+
 .order-grid-row {
     text-align: center;
     border-bottom: 1px solid rgba(180, 190, 210, 0.10);
     padding: 12px 0;
     transition: background 0.2s;
+
     &:hover {
         background: #f4f8ff;
     }
+
     img {
-        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         border: 1px solid #eee;
         border-radius: 8px;
     }

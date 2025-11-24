@@ -93,10 +93,17 @@ const ReturnProductPage = () => {
         } else {
             // Bước 2: Lưu dữ liệu hoàn trả
             try {
-                const values = await form.validateFields();
+                // Chỉ validate các field của bước 2
+                const values = await form.validateFields([
+                    'returnType',
+                    'productIds',
+                    'reason',
+                    'description'
+                ]);
                 setFormData((prev) => ({ ...prev, ...values }));
                 setCurrentStep(currentStep + 1);
-            } catch {
+            } catch (error) {
+                console.error("Validation error:", error);
                 message.error("Vui lòng điền đầy đủ thông tin bắt buộc");
             }
         }
@@ -106,15 +113,26 @@ const ReturnProductPage = () => {
 
     const handleSubmit = async () => {
         try {
-            const values = await form.validateFields();
+            // Chỉ validate field agreement ở bước 3
+            const values = await form.validateFields(['agreement']);
+            console.log("Step 3 values:", values);
+            console.log("Form data from previous steps:", formData);
+
             const allValues = { ...formData, ...values };
+            console.log("All values combined:", allValues);
+
             const formDataToSend = new FormData();
             for (let key in allValues) {
                 if (key === "productIds" && Array.isArray(allValues[key])) {
                     allValues[key].forEach((id) =>
                         formDataToSend.append("productIds[]", id)
                     );
-                } else {
+                } else if (key === "purchaseDate") {
+                    // Format purchaseDate nếu là moment object
+                    const dateValue = allValues[key];
+                    formDataToSend.append(key, dateValue.format ? dateValue.format("YYYY-MM-DD") : dateValue);
+                } else if (key !== "agreement") {
+                    // Không gửi agreement field lên server
                     formDataToSend.append(key, allValues[key]);
                 }
             }
@@ -124,9 +142,16 @@ const ReturnProductPage = () => {
                     formDataToSend.append("image", file.originFileObj);
                 });
             }
-            console.log("Complete submit data:", formDataToSend);
+
+            // Log FormData để debug
+            console.log("FormData entries:");
+            for (let pair of formDataToSend.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+
+            console.log("Sending refund request...");
             const res = await RefundService.RefundPost(formDataToSend);
-            console.log(res);
+            console.log("Response:", res);
             message.success("Yêu cầu hoàn trả đã được gửi thành công!");
             form.resetFields();
             setFileList([]);
@@ -135,6 +160,7 @@ const ReturnProductPage = () => {
             setOrderProducts([]);
         } catch (error) {
             console.error("Lỗi khi gửi form:", error);
+            console.error("Error details:", error.response || error.message);
             message.error("Vui lòng đồng ý với điều khoản trước khi gửi");
         }
     };
@@ -395,8 +421,8 @@ const ReturnProductPage = () => {
                                     {formData.purchaseDate
                                         ? formData.purchaseDate.format
                                             ? formData.purchaseDate.format(
-                                                  "DD/MM/YYYY"
-                                              )
+                                                "DD/MM/YYYY"
+                                            )
                                             : formData.purchaseDate
                                         : ""}
                                 </Text>
@@ -406,7 +432,7 @@ const ReturnProductPage = () => {
                                 <Text>
                                     {getProductNames(
                                         form.getFieldValue("productIds") ||
-                                            formData.productIds
+                                        formData.productIds
                                     )}
                                 </Text>
                             </div>
@@ -434,8 +460,14 @@ const ReturnProductPage = () => {
                             valuePropName="checked"
                             rules={[
                                 {
-                                    required: true,
-                                    message: "Vui lòng đồng ý với điều khoản",
+                                    validator: (_, value) =>
+                                        value
+                                            ? Promise.resolve()
+                                            : Promise.reject(
+                                                new Error(
+                                                    "Vui lòng đồng ý với điều khoản"
+                                                )
+                                            ),
                                 },
                             ]}
                         >

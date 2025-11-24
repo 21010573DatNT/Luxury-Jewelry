@@ -1,9 +1,38 @@
 const Order = require("../../models/order.model");
+const sendMail = require("../../../../helpers/sendMail");
+const orderEmailHelper = require("../../../../helpers/orderEmail.helper");
 
 //[POST] /api/v1/client/order/paypal-transaction-complete
 module.exports.paypalComplete = async (req, res) => {
     const order = new Order(req.body);
     await order.save();
+
+    // Debug: Log agreeMarketing value
+    console.log("🔍 PayPal - agreeMarketing value:", req.body.agreeMarketing);
+    console.log("🔍 PayPal - agreeMarketing type:", typeof req.body.agreeMarketing);
+
+    // Send order confirmation email ONLY if customer agreed to marketing
+    if (req.body.agreeMarketing === true && req.body.infoUser && req.body.infoUser.email) {
+        try {
+            const emailData = {
+                infoUser: req.body.infoUser,
+                product: req.body.product || [],
+                totalPrice: req.body.totalPrice || 0,
+                orderID: order._id,
+                payment: req.body.payment || 'PayPal',
+                status: req.body.status || 'waiting'
+            };
+            const emailHtml = orderEmailHelper.generateOrderConfirmationEmail(emailData);
+            const subject = `✅ Xác nhận đơn hàng #${order._id} - Luxury Jewelry`;
+            sendMail.sendMail(req.body.infoUser.email, subject, emailHtml);
+            console.log("✅ PayPal - Email sent successfully to:", req.body.infoUser.email);
+        } catch (error) {
+            console.log("❌ PayPal - Error sending email:", error);
+            // Continue without failing the order
+        }
+    } else {
+        console.log("⏭️ PayPal - Email NOT sent (agreeMarketing is false or email missing)");
+    }
 
     res.status(200).json({
         code: 200,
@@ -15,6 +44,33 @@ module.exports.paypalComplete = async (req, res) => {
 module.exports.cashOnDelivery = async (req, res) => {
     const order = new Order(req.body);
     await order.save();
+
+    // Debug: Log agreeMarketing value
+    console.log("🔍 COD - agreeMarketing value:", req.body.agreeMarketing);
+    console.log("🔍 COD - agreeMarketing type:", typeof req.body.agreeMarketing);
+
+    // Send order confirmation email ONLY if customer agreed to marketing
+    if (req.body.agreeMarketing === true && req.body.infoUser && req.body.infoUser.email) {
+        try {
+            const emailData = {
+                infoUser: req.body.infoUser,
+                product: req.body.product || [],
+                totalPrice: req.body.totalPrice || 0,
+                orderID: order._id,
+                payment: req.body.payment || 'Cash-on-delivery',
+                status: req.body.status || 'waiting'
+            };
+            const emailHtml = orderEmailHelper.generateOrderConfirmationEmail(emailData);
+            const subject = `✅ Xác nhận đơn hàng #${order._id} - Luxury Jewelry`;
+            sendMail.sendMail(req.body.infoUser.email, subject, emailHtml);
+            console.log("✅ COD - Email sent successfully to:", req.body.infoUser.email);
+        } catch (error) {
+            console.log("❌ Error sending email:", error);
+            // Continue without failing the order
+        }
+    } else {
+        console.log("⏭️ COD - Email NOT sent (agreeMarketing is false or email missing)");
+    }
 
     res.status(200).json({
         code: 200,

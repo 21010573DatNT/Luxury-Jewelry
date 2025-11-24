@@ -3,6 +3,8 @@ const crypto = require("crypto");
 const qs = require("qs");
 const Order = require("../../models/order.model");
 const config = require("../../../../config/default.json");
+const sendMail = require("../../../../helpers/sendMail");
+const orderEmailHelper = require("../../../../helpers/orderEmail.helper");
 
 // Hàm sắp xếp Object đúng chuẩn VNPAY
 function sortObject(obj) {
@@ -133,6 +135,48 @@ module.exports.paymentReturn = async (req, res) => {
 module.exports.ipnHandler = async (req, res) => {
     try {
         console.log("IPN received:", req.query);
+
+        // Get order info and send email if payment successful
+        const vnp_ResponseCode = req.query.vnp_ResponseCode;
+        const vnp_TxnRef = req.query.vnp_TxnRef;
+
+        if (vnp_ResponseCode === "00") {
+            // Payment successful, find order and send email if opted in
+            try {
+                const orderInfo = req.query.vnp_OrderInfo || "";
+                const orderIdMatch = orderInfo.match(/ma GD:([a-zA-Z0-9]+)/);
+
+                if (orderIdMatch && orderIdMatch[1]) {
+                    const orderId = orderIdMatch[1];
+                    const order = await Order.findById(orderId);
+
+                    console.log("🔍 VNPay - Order found:", orderId);
+                    console.log("🔍 VNPay - agreeMarketing value:", order?.agreeMarketing);
+
+                    // ONLY send email if agreeMarketing is explicitly true
+                    if (order && order.agreeMarketing === true && order.infoUser && order.infoUser.email) {
+                        const emailData = {
+                            infoUser: order.infoUser,
+                            product: order.product || [],
+                            totalPrice: order.totalPrice || 0,
+                            orderID: order._id,
+                            payment: order.payment || 'VNPay',
+                            status: order.status || 'waiting'
+                        };
+                        const emailHtml = orderEmailHelper.generateOrderConfirmationEmail(emailData);
+                        const subject = `✅ Xác nhận đơn hàng #${order._id} - Luxury Jewelry`;
+                        sendMail.sendMail(order.infoUser.email, subject, emailHtml);
+                        console.log("✅ VNPay - Email sent successfully to:", order.infoUser.email);
+                    } else {
+                        console.log("⏭️ VNPay - Email NOT sent (agreeMarketing is false or missing)");
+                    }
+                }
+            } catch (emailError) {
+                console.log("❌ VNPay - Error sending email:", emailError);
+                // Continue without failing the IPN response
+            }
+        }
+
         res.json({ RspCode: "00", Message: "Confirm Success" });
     } catch (error) {
         console.error("Error handling IPN:", error);

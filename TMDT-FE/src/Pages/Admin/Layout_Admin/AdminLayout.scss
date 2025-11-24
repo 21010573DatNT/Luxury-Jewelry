@@ -1,6 +1,42 @@
 .admin-layout {
   min-height: 100vh;
 
+  .ant-layout-sider {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .logout-button {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    width: 218px;
+    z-index: 1000;
+    background: #1890ff;
+    border-color: #1890ff;
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #40a9ff;
+      border-color: #40a9ff;
+      color: rgb(255, 255, 255);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+    }
+  }
+
   .logo {
     height: 32px;
     margin: 16px;
@@ -38,6 +74,7 @@
 
   .admin-content {
     margin: 24px;
+    margin-left: 274px;
     padding: 24px;
     background: #fff;
     min-height: 280px;

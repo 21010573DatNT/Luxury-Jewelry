@@ -106,7 +106,6 @@ function ProductDetail() {
                             background: "#fff",
                             borderRadius: 20,
                             padding: "48px 56px",
-                            boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
                             marginBottom: 60,
                         }}
                     >
@@ -429,8 +428,7 @@ function ProductDetail() {
                         <div
                             style={{
                                 background: "#fff",
-                                borderRadius: 20,
-                                boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
+                                borderRadius: 20,  
                                 padding: "48px 56px",
                                 marginBottom: 60,
                                 textAlign: "left",

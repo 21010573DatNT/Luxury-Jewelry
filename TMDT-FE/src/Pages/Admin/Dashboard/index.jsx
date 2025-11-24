@@ -27,6 +27,17 @@ const AdminDashboard = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
+    // Hàm chuyển đổi trạng thái sang tiếng Việt
+    const getStatusInVietnamese = (status) => {
+        const statusMap = {
+            'waiting': 'Chờ xử lý',
+            'shipping': 'Đang giao',
+            'finish': 'Hoàn thành',
+            'canceled': 'Đã hủy'
+        };
+        return statusMap[status] || status;
+    };
+
     const categoryGet = async () => {
         const res = await ProductService.productCategoryGet();
         setCategory(res);
@@ -67,7 +78,7 @@ const AdminDashboard = () => {
     const getLastFourMonths = () => {
         const months = [];
         const currentDate = new Date();
-        
+
         // Lặp lại 4 lần để lấy các tháng gần nhất
         for (let i = 0; i < 4; i++) {
             const month = currentDate.getMonth() + 1 - i; // Lấy tháng hiện tại và lùi dần
@@ -337,7 +348,7 @@ const AdminDashboard = () => {
                                         item.createdAt
                                     ).toLocaleDateString()}
                                 </Col>
-                                <Col span={6}>{item.status || ""}</Col>
+                                <Col span={6}>{getStatusInVietnamese(item.status) || ""}</Col>
                             </Row>
                         ))
                     )}

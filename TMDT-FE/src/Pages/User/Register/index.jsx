@@ -1,9 +1,9 @@
 import { Typography, Form, Input, Button, message } from 'antd';
-import { Card } from 'antd';
-import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { useState } from 'react';
 import * as UserService from "../../../Services/userService"
 import { useNavigate } from 'react-router-dom';
+import "./Register.scss";
 
 const { Title, Text } = Typography;
 
@@ -42,149 +42,123 @@ function Register() {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '20px'
-        }}>
-            <Card
-                style={{
-                    width: '100%',
-                    maxWidth: 400,
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                    borderRadius: '12px'
-                }}
-                bodyStyle={{ padding: '40px 32px' }}
-            >
-                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <Title level={2} style={{ color: '#1f2937', marginBottom: '8px' }}>
-                        Tạo tài khoản
-                    </Title>
-                    <Text type="secondary">
-                        Đăng ký để bắt đầu sử dụng
-                    </Text>
-                </div>
+        <div className="auth-page-container">
+            <div className="auth-form-wrapper">
+                <div className="auth-card">
+                    <div className="auth-header">
+                        <Title level={2} className="auth-title">Tạo tài khoản</Title>
+                        <Text className="auth-subtitle">Đăng ký để bắt đầu sử dụng</Text>
+                    </div>
 
-                <Form
-                    form={form}
-                    name="register"
-                    onFinish={handleRegister}
-                    onFinishFailed={handleFinishFailed}
-                    layout="vertical"
-                    requiredMark={false}
-                >
-                    <Form.Item
-                        name="name"
-                        label="Họ và tên"
-                        rules={[
-                            { required: true, message: 'Vui lòng nhập họ tên!' },
-                            { min: 2, message: 'Họ tên phải có ít nhất 2 ký tự!' }
-                        ]}
+                    <Form
+                        form={form}
+                        name="registerForm"
+                        onFinish={handleRegister}
+                        onFinishFailed={handleFinishFailed}
+                        layout="vertical"
+                        className="auth-form"
                     >
-                        <Input
-                            prefix={<UserOutlined style={{ color: '#9ca3af' }} />}
-                            placeholder="Nhập họ và tên"
-                            size="large"
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="email"
-                        label="Email"
-                        rules={[
-                            { required: true, message: 'Vui lòng nhập email!' },
-                            { type: 'email', message: 'Email không hợp lệ!' }
-                        ]}
-                    >
-                        <Input
-                            prefix={<MailOutlined style={{ color: '#9ca3af' }} />}
-                            placeholder="Nhập địa chỉ email"
-                            size="large"
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="password"
-                        label="Mật khẩu"
-                        rules={[
-                            { required: true, message: 'Vui lòng nhập mật khẩu!' },
-                            { min: 8, message: 'Mật khẩu phải có ít nhất 8 ký tự!' },
-                            { max: 15, message: 'Mật khẩu không vượt quá 15 ký tự!' },
-                            {
-                                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,15}$/,
-                                message: 'Mật khẩu phải gồm số, chữ thường, chữ in hoa và ký tự đặc biệt!'
-                            }
-                        ]}
-                    >
-                        <Input.Password
-                            prefix={<LockOutlined style={{ color: '#9ca3af' }} />}
-                            placeholder="Nhập mật khẩu"
-                            size="large"
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="confirmPassword"
-                        label="Xác nhận mật khẩu"
-                        dependencies={['password']}
-                        rules={[
-                            { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                    if (!value || getFieldValue('password') === value) {
-                                        return Promise.resolve();
-                                    }
-                                    return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
-                                },
-                            }),
-                        ]}
-                    >
-                        <Input.Password
-                            prefix={<LockOutlined style={{ color: '#9ca3af' }} />}
-                            placeholder="Nhập lại mật khẩu"
-                            size="large"
-                        />
-                    </Form.Item>
-
-                    <Form.Item style={{ marginBottom: '16px' }}>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            size="large"
-                            loading={loading}
-                            block
-                            style={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                border: 'none',
-                                height: '48px',
-                                fontSize: '16px',
-                                fontWeight: '500'
-                            }}
+                        <Form.Item
+                            name="name"
+                            label="Họ và tên"
+                            rules={[
+                                { required: true, message: 'Vui lòng nhập họ tên!' },
+                                { min: 2, message: 'Họ tên phải có ít nhất 2 ký tự!' }
+                            ]}
                         >
-                            {loading ? 'Đang xử lý...' : 'Đăng ký'}
-                        </Button>
-                    </Form.Item>
-                </Form>
+                            <Input
+                                prefix={<UserOutlined />}
+                                placeholder="Nhập họ và tên"
+                                size="large"
+                                className="auth-input"
+                            />
+                        </Form.Item>
 
-                <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                    <Text type="secondary">
-                        Đã có tài khoản? {' '}
-                        <a
-                            href="/login"
-                            style={{
-                                color: '#667eea',
-                                fontWeight: '500',
-                                textDecoration: 'none'
-                            }}
+                        <Form.Item
+                            name="email"
+                            label="Email"
+                            rules={[
+                                { required: true, message: 'Vui lòng nhập email!' },
+                                { type: 'email', message: 'Email không hợp lệ!' }
+                            ]}
                         >
-                            Đăng nhập ngay
-                        </a>
-                    </Text>
+                            <Input
+                                prefix={<MailOutlined />}
+                                placeholder="Nhập địa chỉ email"
+                                size="large"
+                                className="auth-input"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            label="Mật khẩu"
+                            rules={[
+                                { required: true, message: 'Vui lòng nhập mật khẩu!' },
+                                { min: 8, message: 'Mật khẩu phải có ít nhất 8 ký tự!' },
+                                { max: 15, message: 'Mật khẩu không vượt quá 15 ký tự!' },
+                                {
+                                    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,15}$/,
+                                    message: 'Mật khẩu phải gồm số, chữ thường, chữ in hoa và ký tự đặc biệt!'
+                                }
+                            ]}
+                        >
+                            <Input.Password
+                                prefix={<LockOutlined />}
+                                placeholder="Nhập mật khẩu"
+                                size="large"
+                                className="auth-input"
+                                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="confirmPassword"
+                            label="Xác nhận mật khẩu"
+                            dependencies={['password']}
+                            rules={[
+                                { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('password') === value) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
+                                    },
+                                }),
+                            ]}
+                        >
+                            <Input.Password
+                                prefix={<LockOutlined />}
+                                placeholder="Nhập lại mật khẩu"
+                                size="large"
+                                className="auth-input"
+                                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                            />
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                className="auth-submit-btn"
+                                size="large"
+                                loading={loading}
+                                block
+                            >
+                                Đăng ký
+                            </Button>
+                        </Form.Item>
+                    </Form>
+
+                    <div className="auth-footer">
+                        <Text className="auth-footer-text">
+                            Đã có tài khoản?
+                            <a href="/login" className="auth-link"> Đăng nhập ngay</a>
+                        </Text>
+                    </div>
                 </div>
-            </Card>
+            </div>
         </div>
     );
 }

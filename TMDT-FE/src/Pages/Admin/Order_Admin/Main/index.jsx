@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Row, Col, message, DatePicker } from "antd";
+import { Button, Input, Row, Col, message, DatePicker, Pagination } from "antd";
 import {
     PlusOutlined,
     SearchOutlined,
@@ -18,6 +18,8 @@ function OrderAdmin() {
     const [orders, setOrders] = useState([]);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(20);
     const navigate = useNavigate();
     const permissions = TakePermissions();
 
@@ -31,6 +33,21 @@ function OrderAdmin() {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
+    };
+
+    const getTotalQuantity = (products) => {
+        if (!products || products.length === 0) return 0;
+        return products.reduce((total, product) => total + (product.amount || 0), 0);
+    };
+
+    const translatePayment = (payment) => {
+        const paymentMap = {
+            'cash': 'Tiền mặt',
+            'vnpay': 'VNPay',
+            'momo': 'MoMo',
+            'banking': 'Chuyển khoản'
+        };
+        return paymentMap[payment] || payment;
     };
 
     const translateStatus = (status) => {
@@ -97,6 +114,16 @@ function OrderAdmin() {
     const onSearchChange = async (e) => {
         const val = e.target.value;
         getOrderSearch(val);
+        setCurrentPage(1);
+    };
+
+    // Tính toán các đơn hàng hiển thị trên trang hiện tại
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentOrders = orders.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -118,22 +145,31 @@ function OrderAdmin() {
                     <div className="order-grid">
                         {/* Header */}
                         <Row className="order-grid-header" gutter={0}>
-                            <Col span={2}>
+                            <Col span={1}>
                                 <b>STT</b>
                             </Col>
-                            <Col span={5}>
+                            <Col span={3}>
                                 <b>Tên khách hàng</b>
                             </Col>
                             <Col span={3}>
+                                <b>Số điện thoại</b>
+                            </Col>
+                            <Col span={2}>
                                 <b>Tổng tiền</b>
                             </Col>
-                            <Col span={4}>
+                            <Col span={2}>
+                                <b>Số lượng SP</b>
+                            </Col>
+                            <Col span={3}>
                                 <b>Ngày mua</b>
                             </Col>
-                            <Col span={4}>
+                            <Col span={3}>
+                                <b>Phương thức TT</b>
+                            </Col>
+                            <Col span={2}>
                                 <b>Trạng thái</b>
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <b>Hành động</b>
                             </Col>
                         </Row>
@@ -146,21 +182,24 @@ function OrderAdmin() {
                                 <Col span={24}>Không có đơn hàng.</Col>
                             </Row>
                         ) : (
-                            orders.map((item, index) => (
+                            currentOrders.map((item, index) => (
                                 <Row
                                     className="order-grid-row"
                                     key={item.key}
                                     gutter={0}
                                     align="middle"
                                 >
-                                    <Col span={2}>{(index += 1)}</Col>
-                                    <Col span={5}>{item.infoUser?.name}</Col>
-                                    <Col span={3}>{formatPrice(item.totalPrice)} đ</Col>
-                                    <Col span={4}>
+                                    <Col span={1}>{startIndex + index + 1}</Col>
+                                    <Col span={3}>{item.infoUser?.name}</Col>
+                                    <Col span={3}>{item.infoUser?.phone}</Col>
+                                    <Col span={2}>{formatPrice(item.totalPrice)} đ</Col>
+                                    <Col span={2}>{getTotalQuantity(item.product)}</Col>
+                                    <Col span={3}>
                                         {formatDate(item.createdAt)}
                                     </Col>
-                                    <Col span={4}>{translateStatus(item.status) || ""}</Col>
-                                    <Col span={6}>
+                                    <Col span={3}>{translatePayment(item.payment) || ""}</Col>
+                                    <Col span={2}>{translateStatus(item.status) || ""}</Col>
+                                    <Col span={5}>
                                         <Button
                                             icon={<EyeOutlined />}
                                             size="small"
@@ -209,6 +248,16 @@ function OrderAdmin() {
                                 </Row>
                             ))
                         )}
+                    </div>
+                    <div className="order-admin__pagination">
+                        <Pagination
+                            current={currentPage}
+                            pageSize={pageSize}
+                            total={orders.length}
+                            onChange={handlePageChange}
+                            showSizeChanger={false}
+                            showTotal={(total, range) => `${range[0]}-${range[1]} của ${total} đơn hàng`}
+                        />
                     </div>
                 </>
             ) : (

@@ -1,6 +1,6 @@
 .user-dashboard {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     padding: 20px;
 }
 
@@ -13,7 +13,7 @@
 }
 
 .dashboard-sider {
-    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(180deg, #8b3a3a 0%, #6d2828 100%);
 }
 
 .sider-content {
@@ -34,14 +34,14 @@
 
 .welcome-name {
     color: white;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     margin: 0;
 }
 
 .welcome-role {
     color: rgba(255, 255, 255, 0.7);
-    font-size: 14px;
+    font-size: 16px;
     margin: 4px 0 0;
 }
 
@@ -55,17 +55,19 @@
     border-radius: 8px;
     color: rgba(255, 255, 255, 0.8);
     font-weight: 500;
+    font-size: 16px;
     transition: all 0.3s ease;
 }
 
 .dashboard-menu .ant-menu-item-selected {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #ffe4e4, #ffd4d4);
+    color: #6d2828;
+    box-shadow: 0 4px 12px rgba(255, 228, 228, 0.6);
+    margin-left: 4px;
 }
 
 .dashboard-menu .ant-menu-item .anticon {
-    font-size: 16px;
+    font-size: 20px;
     margin-right: 12px;
 }
 
@@ -92,16 +94,16 @@
 .profile-card .ant-card-head,
 .password-card .ant-card-head,
 .orders-card .ant-card-head {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #ff5757, #ff3838);
     border-radius: 12px 12px 0 0;
 }
 
 .profile-card .ant-card-head-title,
 .password-card .ant-card-head-title,
 .orders-card .ant-card-head-title {
-    color: white;
+    color: white !important;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .profile-card .ant-card-extra .ant-btn,
@@ -120,20 +122,20 @@
 
 .profile-avatar {
     margin-right: 24px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #fff0f0, #ffe0e0);
 }
 
 .profile-info h3 {
     margin: 0 0 8px;
     color: #2c3e50;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 600;
 }
 
 .profile-email {
     color: #7f8c8d;
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .profile-details {
@@ -152,32 +154,40 @@
 .detail-label {
     font-weight: 600;
     color: #2c3e50;
+    font-size: 16px;
 }
 
 .detail-value {
     color: #34495e;
+    font-size: 16px;
 }
 
 .password-form {
     max-width: 400px;
 }
 
-.password-form .ant-form-item-label > label {
+.password-form .ant-form-item-label>label {
     font-weight: 600;
     color: #2c3e50;
+    font-size: 16px;
 }
 
 .submit-btn {
     width: 100%;
     height: 44px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    border: none !important;
     border-radius: 8px;
     font-weight: 600;
     font-size: 16px;
+    color: white !important;
 }
 
-.orders-table .ant-table-thead > tr > th {
+.submit-btn:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130) !important;
+}
+
+.orders-table .ant-table-thead>tr>th {
     background: #f8fafc;
     font-weight: 600;
     color: #2c3e50;
@@ -185,7 +195,7 @@
 
 .order-code {
     font-weight: 600;
-    color: #667eea;
+    color: #ff5757;
 }
 
 .order-amount {

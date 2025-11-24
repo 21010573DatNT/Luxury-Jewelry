@@ -61,13 +61,13 @@ $spacing-xl: 32px;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
-    
+
     &:hover {
         transform: translateY(-2px);
         box-shadow: $shadow-lg;
         background: linear-gradient(135deg, darken($primary-color, 5%) 0%, darken($accent-color, 5%) 100%);
     }
-    
+
     &:active {
         transform: translateY(0);
     }
@@ -83,13 +83,13 @@ $spacing-xl: 32px;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
-    
+
     &:hover {
         transform: translateY(-2px);
         box-shadow: $shadow-lg;
         background: linear-gradient(135deg, darken($danger-color, 5%) 0%, darken(#dc2626, 5%) 100%);
     }
-    
+
     &:active {
         transform: translateY(0);
     }
@@ -112,16 +112,6 @@ $spacing-xl: 32px;
         position: relative;
         overflow: hidden;
 
-        &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, $primary-color 0%, $accent-color 100%);
-        }
-
         .payment-section-heading {
             font-size: 28px;
             font-weight: 700;
@@ -129,17 +119,7 @@ $spacing-xl: 32px;
             margin-bottom: $spacing-lg;
             position: relative;
             padding-bottom: $spacing-sm;
-
-            &::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 60px;
-                height: 3px;
-                background: linear-gradient(90deg, $primary-color 0%, $accent-color 100%);
-                border-radius: 2px;
-            }
+            text-align: center;
         }
 
         .order-form-group {
@@ -199,7 +179,7 @@ $spacing-xl: 32px;
             .ant-select {
                 width: 100% !important;
                 height: auto !important;
-                
+
                 .ant-picker-input,
                 .ant-select-selector {
                     border: 2px solid $border-color !important;
@@ -207,11 +187,11 @@ $spacing-xl: 32px;
                     padding: $spacing-sm $spacing-md !important;
                     font-size: 16px !important;
                     transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
-                    
+
                     &:hover {
                         border-color: lighten($accent-color, 20%) !important;
                     }
-                    
+
                     &:focus,
                     &.ant-picker-focused,
                     &.ant-select-focused {
@@ -240,7 +220,7 @@ $spacing-xl: 32px;
         height: fit-content;
 
         .order-summary-heading {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: $text-primary;
             margin-bottom: $spacing-lg;
@@ -379,6 +359,72 @@ $spacing-xl: 32px;
             }
         }
 
+
+        // Agreement section UI
+        .agreement-section {
+            margin-top: $spacing-md;
+            padding: $spacing-md $spacing-lg;
+            background: rgba(59, 130, 246, 0.03);
+            border: 1px solid $border-light;
+            border-radius: $radius-md;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+
+            .agreement-heading {
+                font-size: 16px;
+                font-weight: 600;
+                color: $text-primary;
+                margin: 0 0 $spacing-xs;
+                letter-spacing: .25px;
+            }
+
+            .agreement-item {
+                display: flex;
+                align-items: flex-start;
+                gap: $spacing-sm;
+                padding: $spacing-xs $spacing-sm;
+                border-radius: $radius-sm;
+                transition: background-color .25s ease;
+
+                &:hover {
+                    background: rgba(59, 130, 246, 0.06);
+                }
+
+                .agreement-text {
+                    font-size: 13px;
+                    line-height: 1.5;
+                    color: $text-primary;
+                }
+
+                .agreement-detail {
+                    font-size: 11px;
+                    color: $text-secondary;
+                    font-style: italic;
+                    margin-left: 4px;
+                }
+            }
+
+            .optional .agreement-text {
+                color: $text-secondary;
+            }
+
+            .ant-checkbox-wrapper {
+                display: contents;
+            }
+
+            .ant-checkbox-inner {
+                width: 18px;
+                height: 18px;
+                border-radius: 4px;
+            }
+
+            .ant-checkbox-checked .ant-checkbox-inner {
+                background: $accent-color;
+                border-color: $accent-color;
+            }
+        }
+
         // PayPal button container
         .paypal-button-wrapper {
             margin-top: $spacing-lg;
@@ -461,7 +507,7 @@ $spacing-xl: 32px;
         .payment-options-container {
             .payment-option-item {
                 padding: $spacing-sm;
-                
+
                 label {
                     font-size: 14px;
                 }
@@ -472,6 +518,7 @@ $spacing-xl: 32px;
 
 // Loading states - FIXED: Only disable events when actually loading
 .order-info-wrapper.order-loading-state {
+
     .payment-details-section,
     .order-summary-panel {
         opacity: 0.6;
@@ -521,7 +568,7 @@ $spacing-xl: 32px;
     .order-disabled {
         opacity: 0.6;
         cursor: not-allowed !important;
-        
+
         &:hover {
             transform: none !important;
             box-shadow: none !important;
@@ -535,6 +582,7 @@ $spacing-xl: 32px;
         border-radius: $radius-sm;
         text-align: center;
         border-left: 4px solid $success-color;
+        border-right: 4px solid $success-color;
 
         small {
             color: $success-color;
@@ -563,28 +611,28 @@ $spacing-xl: 32px;
         width: 100%;
         margin: 0;
         padding: 0;
-        
+
         .ant-radio {
             margin-right: $spacing-sm;
-            
+
             .ant-radio-inner {
                 border-color: $border-color;
-                
+
                 &:hover {
                     border-color: $accent-color;
                 }
             }
-            
+
             &.ant-radio-checked .ant-radio-inner {
                 border-color: $accent-color;
                 background-color: $accent-color;
-                
+
                 &::after {
                     background-color: white;
                 }
             }
         }
-        
+
         span:not(.ant-radio) {
             font-weight: 500;
             color: $text-primary;
@@ -600,11 +648,11 @@ $spacing-xl: 32px;
     border-radius: $radius-sm;
     padding: $spacing-sm $spacing-md;
     font-size: 16px;
-    
+
     &:hover {
         border-color: lighten($accent-color, 20%);
     }
-    
+
     &:focus,
     &.ant-input-focused {
         @include input-focus;
@@ -619,6 +667,7 @@ $spacing-xl: 32px;
 
 // Instead, apply specific transitions where needed
 .order-info-wrapper {
+
     button,
     input,
     textarea,

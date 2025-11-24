@@ -12,12 +12,16 @@ const userSchema = new mongoose.Schema({
   avatar: String,
   status: String,
   totalOrder: Number,
+  agreeMarketing: {
+    type: Boolean,
+    default: false
+  },
   deleted: {
     type: Boolean,
     default: false
   },
   deletedAt: Date
-},{
+}, {
   timestamps: true
 });
 

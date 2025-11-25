@@ -73,25 +73,34 @@ module.exports.index = async (req, res) => {
 //[GET] /api/v1/products/count
 module.exports.count = async (req, res) => {
     try {
-        const category_id = req.query.category_id;
+        const { category_id, material, priceRange, sort } = req.query;
+
+        // Build filter object
+        let filter = { deleted: false };
+
         if (category_id) {
-            const count = await Product.countDocuments({
-                product_category_id: category_id,
-                deleted: false,
-            });
-            res.status(200).json({
-                count: count,
-            });
-        } else {
-            const count = await Product.countDocuments({
-                deleted: false,
-            });
-            res.status(200).json({
-                count: count,
-            });
+            filter.product_category_id = category_id;
         }
+
+        if (material) {
+            filter.material = material;
+        }
+
+        if (priceRange) {
+            const [min, max] = priceRange.split("-").map(Number);
+            filter.price = { $gte: min, $lte: max };
+        }
+
+        const count = await Product.countDocuments(filter);
+
+        res.status(200).json({
+            count: count,
+        });
     } catch (error) {
         console.log(error);
+        res.status(500).json({
+            message: "Error counting products",
+        });
     }
 };
 

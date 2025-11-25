@@ -38,7 +38,9 @@ function UserAdmin() {
     useEffect(() => {
         const UsersGet = async () => {
             const res = await UserService.UserGet();
-            setUsers(res.users);
+            // Sắp xếp theo thời gian tạo mới nhất
+            const sortedUsers = res.users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setUsers(sortedUsers);
         };
         UsersGet();
     }, []);

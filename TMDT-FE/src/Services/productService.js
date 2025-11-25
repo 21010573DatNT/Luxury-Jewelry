@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = process.env.REACT_APP_API_BACKEND;
 
-export const productGet = async (currentPage, category,material, priceRange,sort) => {
+export const productGet = async (currentPage, category, material, priceRange, sort) => {
     const params = new URLSearchParams();
 
     if (category) params.append("productCategory", category);
@@ -17,15 +17,16 @@ export const productGet = async (currentPage, category,material, priceRange,sort
     return res.data;
 };
 
-export const countProduct = async (category_id) => {
-    let res;
-    if (category_id) {
-        res = await axios.get(
-            `${API}/admin/products/count?category_id=${category_id}`
-        );
-    } else {
-        res = await axios.get(`${API}/admin/products/count`);
-    }
+export const countProduct = async (category_id, material, priceRange, sort) => {
+    const params = new URLSearchParams();
+
+    if (category_id) params.append("category_id", category_id);
+    if (material) params.append("material", material);
+    if (priceRange) params.append("priceRange", priceRange);
+    if (sort) params.append("sort", sort);
+
+    const url = `${API}/admin/products/count${params.toString() ? `?${params.toString()}` : ''}`;
+    const res = await axios.get(url);
     return res.data;
 };
 

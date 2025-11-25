@@ -16,6 +16,8 @@ const { RangePicker } = DatePicker;
 
 function OrderAdmin() {
     const [orders, setOrders] = useState([]);
+    const [allOrders, setAllOrders] = useState([]);
+    const [search, setSearch] = useState("");
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -60,11 +62,6 @@ function OrderAdmin() {
         return statusMap[status] || status;
     };
 
-    const getOrderSearch = async (val) => {
-        const res = await OrderService.OrderSearch(val);
-        setOrders(res.orders);
-    };
-
     useEffect(() => {
         const OrdersGet = async () => {
             const res = await OrderService.OrderGet();
@@ -76,9 +73,15 @@ function OrderAdmin() {
                         result.push(order);
                     }
                 }
+                // Sắp xếp theo thời gian tạo mới nhất
+                result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setOrders(result);
+                setAllOrders(result);
             } else {
-                setOrders(res.orders);
+                // Sắp xếp theo thời gian tạo mới nhất
+                const sortedOrders = res.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setOrders(sortedOrders);
+                setAllOrders(sortedOrders);
             }
         };
         OrdersGet();
@@ -113,14 +116,28 @@ function OrderAdmin() {
 
     const onSearchChange = async (e) => {
         const val = e.target.value;
-        getOrderSearch(val);
+        setSearch(val);
         setCurrentPage(1);
     };
+
+    // Lọc đơn hàng theo tìm kiếm
+    const filteredOrders = orders.filter((order) => {
+        const searchLower = search.toLowerCase();
+        const customerName = order.infoUser?.name?.toLowerCase() || "";
+        const customerPhone = order.infoUser?.phone?.toLowerCase() || "";
+        const status = translateStatus(order.status)?.toLowerCase() || "";
+
+        return (
+            customerName.includes(searchLower) ||
+            customerPhone.includes(searchLower) ||
+            status.includes(searchLower)
+        );
+    });
 
     // Tính toán các đơn hàng hiển thị trên trang hiện tại
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const currentOrders = orders.slice(startIndex, endIndex);
+    const currentOrders = filteredOrders.slice(startIndex, endIndex);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -135,10 +152,11 @@ function OrderAdmin() {
                     </div>
                     <div className="order-admin__search">
                         <Input
-                            placeholder="Tìm kiếm đơn hàng..."
+                            placeholder="Tìm kiếm theo tên, số điện thoại, trạng thái..."
                             prefix={<SearchOutlined />}
+                            value={search}
                             onChange={onSearchChange}
-                            style={{ width: 300, marginRight: 30 }}
+                            style={{ width: 400, marginRight: 30 }}
                         />
                         <RangePicker onChange={handleChangeDate} />
                     </div>
@@ -154,7 +172,7 @@ function OrderAdmin() {
                             <Col span={3}>
                                 <b>Số điện thoại</b>
                             </Col>
-                            <Col span={2}>
+                            <Col span={2} style={{ textAlign: 'center' }}>
                                 <b>Tổng tiền</b>
                             </Col>
                             <Col span={2}>
@@ -192,7 +210,7 @@ function OrderAdmin() {
                                     <Col span={1}>{startIndex + index + 1}</Col>
                                     <Col span={3}>{item.infoUser?.name}</Col>
                                     <Col span={3}>{item.infoUser?.phone}</Col>
-                                    <Col span={2}>{formatPrice(item.totalPrice)} đ</Col>
+                                    <Col span={2} style={{ textAlign: 'right', paddingRight: '20px' }}>{formatPrice(item.totalPrice)}</Col>
                                     <Col span={2}>{getTotalQuantity(item.product)}</Col>
                                     <Col span={3}>
                                         {formatDate(item.createdAt)}
@@ -253,7 +271,7 @@ function OrderAdmin() {
                         <Pagination
                             current={currentPage}
                             pageSize={pageSize}
-                            total={orders.length}
+                            total={filteredOrders.length}
                             onChange={handlePageChange}
                             showSizeChanger={false}
                             showTotal={(total, range) => `${range[0]}-${range[1]} của ${total} đơn hàng`}

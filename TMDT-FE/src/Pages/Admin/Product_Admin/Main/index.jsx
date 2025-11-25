@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Row, Col, message } from "antd";
+import { Button, Input, Row, Col, message, Pagination } from "antd";
 import {
     PlusOutlined,
     SearchOutlined,
@@ -8,41 +8,44 @@ import {
     EyeOutlined,
 } from "@ant-design/icons";
 import "./ProductAdmin.scss";
-import PaginationComponents from "../../../../Componets/Pagination";
 import * as ProductService from "../../../../Services/productService";
 import { useNavigate } from "react-router-dom";
 import { TakePermissions } from "../../../../Componets/TakePermissions";
 
 function ProductAdmin() {
     const [products, setProducts] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(9);
+    const [search, setSearch] = useState("");
     const navigate = useNavigate();
     const permissions = TakePermissions();
 
     const getProductSearch = async (val) => {
         const res = await ProductService.productSearch(val);
         setProducts(res.products);
+        setAllProducts(res.products);
     };
 
     useEffect(() => {
         const productGet = async () => {
-            const res = await ProductService.productGet(currentPage);
+            const res = await ProductService.productGet();
             setProducts(res.products);
+            setAllProducts(res.products);
         };
         productGet();
-    }, [currentPage]);
+    }, []);
 
-    const handleChangePagination = (e) => {
-        console.log(e);
-        setCurrentPage(e);
+    const handleChangePagination = (page) => {
+        setCurrentPage(page);
     };
 
     const handleDelete = async (id) => {
         const res = await ProductService.productDelete(id);
         if (res.code === 200) {
-            setProducts((prevProducts) =>
-                prevProducts.filter((product) => product._id !== id)
-            );
+            const updatedProducts = products.filter((product) => product._id !== id);
+            setProducts(updatedProducts);
+            setAllProducts(updatedProducts);
             message.success("Xóa sản phẩm thành công!");
         } else {
             message.error("Xóa sản phẩm thất bại!");
@@ -51,8 +54,21 @@ function ProductAdmin() {
 
     const onSearchChange = async (e) => {
         const val = e.target.value;
-        getProductSearch(val);
+        setSearch(val);
+        setCurrentPage(1);
+
+        if (val.trim() === "") {
+            setProducts(allProducts);
+        } else {
+            getProductSearch(val);
+        }
     };
+
+    // Lọc và phân trang
+    const filteredProducts = search.trim() === "" ? allProducts : products;
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
     return (
         <div className="product-admin">
@@ -94,7 +110,7 @@ function ProductAdmin() {
                             <Col span={6}>
                                 <b>Tên sản phẩm</b>
                             </Col>
-                            <Col span={3}>
+                            <Col span={3} style={{ textAlign: 'center' }}>
                                 <b>Giá</b>
                             </Col>
                             <Col span={2}>
@@ -116,14 +132,14 @@ function ProductAdmin() {
                                 <Col span={24}>Không có sản phẩm nào.</Col>
                             </Row>
                         ) : (
-                            products.map((item, index) => (
+                            currentProducts.map((item, index) => (
                                 <Row
                                     className="product-grid-row"
-                                    key={item.key}
+                                    key={item._id || item.key}
                                     gutter={0}
                                     align="middle"
                                 >
-                                    <Col span={1}>{(index += 1)}</Col>
+                                    <Col span={1}>{startIndex + index + 1}</Col>
                                     <Col span={3}>
                                         {item.thumbnail ? (
                                             <img
@@ -141,8 +157,8 @@ function ProductAdmin() {
                                         )}
                                     </Col>
                                     <Col span={6}>{item.title}</Col>
-                                    <Col span={3}>
-                                        {item.price?.toLocaleString()} đ
+                                    <Col span={3} style={{ textAlign: 'center' }}>
+                                        {item.price?.toLocaleString()}
                                     </Col>
                                     <Col span={2}>{item.stock}</Col>
                                     <Col span={4}>{item.create}</Col>
@@ -198,11 +214,22 @@ function ProductAdmin() {
                             ))
                         )}
                     </div>
-                    <div className="pagination" style={{ marginTop: 20 }}>
-                        <PaginationComponents
-                            onChange={handleChangePagination}
-                        />
-                    </div>
+
+                    {/* Pagination */}
+                    {filteredProducts.length > 0 && (
+                        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                            <Pagination
+                                current={currentPage}
+                                pageSize={pageSize}
+                                total={filteredProducts.length}
+                                onChange={handleChangePagination}
+                                showSizeChanger={false}
+                                showTotal={(total, range) =>
+                                    `${range[0]}-${range[1]} của ${total} sản phẩm`
+                                }
+                            />
+                        </div>
+                    )}
                 </>
             ) : (
                 <>

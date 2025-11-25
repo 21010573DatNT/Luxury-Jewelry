@@ -87,8 +87,14 @@ module.exports.createPaymentUrl = async (req, res) => {
 // -----------------------------
 module.exports.paymentReturn = async (req, res) => {
     try {
+        console.log("📥 VNPay Return - Received params:", req.query);
+
         let vnp_Params = req.query;
         const secureHash = vnp_Params["vnp_SecureHash"];
+
+        // Lưu orderInfo trước khi sort (vì sort sẽ encode)
+        const originalOrderInfo = vnp_Params["vnp_OrderInfo"];
+        console.log("📦 Original OrderInfo:", originalOrderInfo);
 
         delete vnp_Params["vnp_SecureHash"];
         delete vnp_Params["vnp_SecureHashType"];
@@ -102,8 +108,59 @@ module.exports.paymentReturn = async (req, res) => {
             .update(Buffer.from(signData, "utf-8"))
             .digest("hex");
 
+        console.log("🔐 Signature match:", secureHash === signed);
+        console.log("💳 Response Code:", req.query.vnp_ResponseCode);
+
         if (secureHash === signed) {
-            // TODO: kiểm tra đơn hàng thực tế trong DB nếu cần
+            // Gửi email nếu thanh toán thành công
+            if (req.query.vnp_ResponseCode === "00") {
+                try {
+                    // Sử dụng originalOrderInfo thay vì orderInfo đã bị encode
+                    const decodedOrderInfo = decodeURIComponent(originalOrderInfo || "");
+                    console.log("📋 Decoded OrderInfo:", decodedOrderInfo);
+
+                    const orderIdMatch = decodedOrderInfo.match(/ma GD:([a-zA-Z0-9]+)/);
+                    console.log("🔍 Order ID Match:", orderIdMatch);
+
+                    if (orderIdMatch && orderIdMatch[1]) {
+                        const orderId = orderIdMatch[1];
+                        const order = await Order.findById(orderId);
+
+                        console.log("🔍 VNPay Return - Order found:", orderId);
+                        console.log("🔍 VNPay Return - Order object:", order ? "exists" : "null");
+                        console.log("🔍 VNPay Return - agreeMarketing value:", order?.agreeMarketing);
+                        console.log("🔍 VNPay Return - agreeMarketing type:", typeof order?.agreeMarketing);
+                        console.log("🔍 VNPay Return - Email:", order?.infoUser?.email);
+
+                        // ONLY send email if agreeMarketing is explicitly true
+                        if (order && order.agreeMarketing === true && order.infoUser && order.infoUser.email) {
+                            const emailData = {
+                                infoUser: order.infoUser,
+                                product: order.product || [],
+                                totalPrice: order.totalPrice || 0,
+                                orderID: order._id,
+                                payment: order.payment || 'VNPay',
+                                status: order.status || 'waiting'
+                            };
+                            const emailHtml = orderEmailHelper.generateOrderConfirmationEmail(emailData);
+                            const subject = `✅ Xác nhận đơn hàng #${order._id} - Luxury Jewelry`;
+                            await sendMail.sendMail(order.infoUser.email, subject, emailHtml);
+                            console.log("✅ VNPay Return - Email sent successfully to:", order.infoUser.email);
+                        } else {
+                            console.log("⏭️ VNPay Return - Email NOT sent");
+                            console.log("  - Order exists?", !!order);
+                            console.log("  - agreeMarketing === true?", order?.agreeMarketing === true);
+                            console.log("  - Has email?", !!order?.infoUser?.email);
+                        }
+                    } else {
+                        console.log("❌ Could not extract order ID from:", decodedOrderInfo);
+                    }
+                } catch (emailError) {
+                    console.log("❌ VNPay Return - Error sending email:", emailError);
+                    // Continue without failing the response
+                }
+            }
+
             return res.status(200).json({
                 success: true,
                 message: "Xác thực thanh toán thành công",

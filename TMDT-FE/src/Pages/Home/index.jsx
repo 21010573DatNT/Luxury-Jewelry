@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import SliderComponets from "../../Componets/SliderComponets";
-import Banner1 from "../../Assets/image/sliderHome/Banner1.jpg";
-import Banner2 from "../../Assets/image/sliderHome/Banner2.jpg";
+import Banner3 from "../../Assets/image/sliderHome/Banner3.jpg";
+import Banner4 from "../../Assets/image/sliderHome/Banner4.jpg";
+import Banner5 from "../../Assets/image/sliderHome/Banner5.jpg";
+import Banner6 from "../../Assets/image/sliderHome/Banner6.jpg";
 import CardProduct from "../../Componets/CardProduct";
 import * as CartService from "../../Services/cartService";
 import * as ProductService from "../../Services/productService";
@@ -60,7 +62,7 @@ function Home() {
 
     return (
         <div className="home">
-            <SliderComponets arrSlider={[Banner1, Banner2]} />
+            <SliderComponets arrSlider={[ Banner3, Banner4, Banner5, Banner6]} />
 
             {/* Featured Products Section */}
             <section className="featured-products-section">

@@ -20,13 +20,17 @@ const orderSchema = new mongoose.Schema(
                 image: String,
             }
         ],
-        status:String,
+        status: String,
         totalPrice: Number,
         payment: String,
         txnRef: Date,
+        agreeMarketing: {
+            type: Boolean,
+            default: false,
+        },
         deleted: {
             type: Boolean,
-            default : false,
+            default: false,
         },
         deletedAt: Date,
     },

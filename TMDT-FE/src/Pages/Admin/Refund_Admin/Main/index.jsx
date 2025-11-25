@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Row, Col, message } from "antd";
+import { Button, Input, Row, Col, message, Pagination } from "antd";
 import {
     PlusOutlined,
     SearchOutlined,
@@ -15,6 +15,8 @@ import { TakePermissions } from "../../../../Componets/TakePermissions";
 function RefundAdmin() {
     const [refunds, setRefunds] = useState([]);
     const [search, setSearch] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(15);
     const navigate = useNavigate();
     const permissions = TakePermissions();
 
@@ -43,7 +45,9 @@ function RefundAdmin() {
     useEffect(() => {
         const RefundsGet = async () => {
             const res = await RefundService.RefundGet();
-            setRefunds(res.refunds);
+            // Sắp xếp theo thời gian tạo mới nhất
+            const sortedRefunds = res.refunds.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setRefunds(sortedRefunds);
         };
         RefundsGet();
     }, []);
@@ -58,6 +62,25 @@ function RefundAdmin() {
         } else {
             message.error("Xóa thất bại!");
         }
+    };
+
+    // Filter refunds based on search
+    const filteredRefunds = refunds.filter((item) => {
+        const searchLower = search.toLowerCase();
+        return (
+            item.customerName?.toLowerCase().includes(searchLower) ||
+            item.returnType?.toLowerCase().includes(searchLower) ||
+            translateStatus(item.status)?.toLowerCase().includes(searchLower)
+        );
+    });
+
+    // Calculate pagination
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentRefunds = filteredRefunds.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -107,14 +130,14 @@ function RefundAdmin() {
                                 <Col span={24}>Không có dữ liệu</Col>
                             </Row>
                         ) : (
-                            refunds.map((item, index) => (
+                            currentRefunds.map((item, index) => (
                                 <Row
                                     className="order-grid-row"
                                     key={item.key}
                                     gutter={0}
                                     align="middle"
                                 >
-                                    <Col span={2}>{(index += 1)}</Col>
+                                    <Col span={2}>{startIndex + index + 1}</Col>
                                     <Col span={5}>{item.customerName}</Col>
                                     <Col span={3}>{item.returnType}</Col>
                                     <Col span={4}>
@@ -171,6 +194,22 @@ function RefundAdmin() {
                             ))
                         )}
                     </div>
+
+                    {/* Pagination */}
+                    {filteredRefunds.length > 0 && (
+                        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                            <Pagination
+                                current={currentPage}
+                                pageSize={pageSize}
+                                total={filteredRefunds.length}
+                                onChange={handlePageChange}
+                                showSizeChanger={false}
+                                showTotal={(total, range) =>
+                                    `${range[0]}-${range[1]} của ${total} đơn hàng`
+                                }
+                            />
+                        </div>
+                    )}
                 </>
             ) : (
                 <>

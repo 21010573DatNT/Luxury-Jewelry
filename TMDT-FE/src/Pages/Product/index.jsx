@@ -112,7 +112,7 @@ function Product() {
                     <div className="pagination">
                         <PaginationComponents
                             onChange={handleChangePagination}
-                            category_id={filters.CategoryId}
+                            filters={filters}
                         />
                     </div>
                 </Col>

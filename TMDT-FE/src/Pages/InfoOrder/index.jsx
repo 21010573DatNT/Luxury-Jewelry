@@ -594,7 +594,7 @@ const InfoOrder = () => {
 
                         {/* Agreement Checkboxes */}
                         <div className="agreement-section">
-                            <h5 className="agreement-heading">Điều khoản & Đồng ý</h5>
+                            <h5 className="agreement-heading">Điều khoản & Xác nhận</h5>
 
                             <label className="agreement-item">
                                 <Checkbox
@@ -605,7 +605,7 @@ const InfoOrder = () => {
                                     }}
                                 />
                                 <span className="agreement-text">
-                                    Tôi đồng ý cho Luxury Jewelry thu thập và xử lý dữ liệu cá nhân theo quy định của pháp luật.
+                                    Xác nhận đúng các thông tin thanh toán
                                 </span>
                             </label>
 
@@ -615,7 +615,7 @@ const InfoOrder = () => {
                                     onChange={(e) => setAgreeMarketing(e.target.checked)}
                                 />
                                 <span className="agreement-text">
-                                    Tôi đồng ý nhận email / SMS về ưu đãi và khuyến mãi của Luxury Jewelry
+                                    Đồng ý nhận email hóa đơn thanh toán của Luxury Jewelry
                                     <span className="agreement-detail">(Không bắt buộc)</span>
                                 </span>
                             </label>

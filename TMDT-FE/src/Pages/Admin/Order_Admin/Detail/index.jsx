@@ -49,7 +49,7 @@ function Order_Detail() {
                 email: user?.email,
                 note: user?.note,
                 status: translateStatus(order?.status) || "",
-                totalPrice: order?.totalPrice,
+                totalPrice: formatPrice(order?.totalPrice),
                 payment: order?.payment,
             }}
         >
@@ -122,7 +122,7 @@ function Order_Detail() {
             </div>
 
             <Form.Item label="Tổng hóa đơn" name="totalPrice" style={{ marginTop: 20 }}>
-                <Input readOnly value={`${formatPrice(order?.totalPrice)} đ`} />
+                <Input readOnly />
             </Form.Item>
             <Form.Item label="Phương thức thanh toán" name="payment">
                 <Input readOnly value={order?.payment} />

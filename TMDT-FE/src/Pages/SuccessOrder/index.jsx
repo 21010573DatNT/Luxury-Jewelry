@@ -12,7 +12,8 @@ import {
     HomeOutlined,
 } from "@ant-design/icons";
 import * as OrderService from "../../Services/orderService"
-import { useNavigate, useParams } from "react-router-dom";
+import * as VnpayService from "../../Services/vnpayService"
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "./SuccessPayment.scss";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,7 +26,7 @@ const { Title, Text } = Typography;
 
 const SuccessOrder = () => {
     const { vnp_BankCode } = useParams()
-    // const {user_id} = useParams()
+    const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const authUser = useSelector((state) => state.user);
@@ -42,7 +43,40 @@ const SuccessOrder = () => {
     }
 
     useEffect(() => {
-        NewOrder();
+        console.log('🔍 SuccessOrder - Location:', location);
+        console.log('🔍 SuccessOrder - Search params:', location.search);
+
+        // Kiểm tra nếu có query params từ VNPay (thanh toán VNPay)
+        const queryParams = new URLSearchParams(location.search);
+        console.log('🔍 Has vnp_ResponseCode?', queryParams.has('vnp_ResponseCode'));
+
+        if (queryParams.has('vnp_ResponseCode')) {
+            console.log('✅ Detected VNPay payment, calling verification API...');
+            // Gọi API để xác thực và gửi email
+            const verifyVnpayPayment = async () => {
+                try {
+                    const params = Object.fromEntries(queryParams.entries());
+                    console.log('📤 Sending params to backend:', params);
+                    const result = await VnpayService.VnPayReturn(params);
+                    console.log('📥 VNPay verification result:', result);
+
+                    if (result.success) {
+                        // Sau khi xác thực thành công, lấy thông tin order
+                        await NewOrder();
+                    }
+                } catch (error) {
+                    console.error('❌ Error verifying VNPay payment:', error);
+                    // Vẫn lấy thông tin order dù có lỗi
+                    await NewOrder();
+                }
+            };
+            verifyVnpayPayment();
+        } else {
+            console.log('ℹ️ No VNPay params, using regular order fetch (COD/PayPal)');
+            // Thanh toán COD hoặc PayPal
+            NewOrder();
+        }
+
         // Xóa giỏ hàng sau khi thanh toán thành công (trang thành công là điểm chung cho COD/VNPay/PayPal)
         const clearCart = async () => {
             try {

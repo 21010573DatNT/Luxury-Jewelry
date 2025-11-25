@@ -98,7 +98,12 @@ function Product_Edit() {
 
             {/* Giá */}
             <Form.Item label="Giá" name="price">
-                <InputNumber min={0} style={{ width: "100%" }} />
+                <InputNumber
+                    min={0}
+                    style={{ width: "100%" }}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+                    parser={(value) => value.replace(/\./g, '')}
+                />
             </Form.Item>
 
             {/* Số lượng */}

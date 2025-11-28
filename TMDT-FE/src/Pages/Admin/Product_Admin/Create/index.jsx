@@ -165,133 +165,136 @@ function Product_Create() {
                 </div>
 
             )}
-            <Form
-                layout="vertical"
-                onFinish={handleSubmit}
-                initialValues={{
-                    title: "",
-                    description: "",
-                    color: "",
-                    material: "",
-                    stone: "",
-                    sex: "",
-                    price: 0,
-                    discount: 0,
-                    stock: 0,
-                    position: 0,
-                    featured: false,
-                    active: true,
-                }}
-            >
-                {/* Tiêu đề */}
-                <Form.Item
-                    label="Tiêu đề"
-                    name="title"
-                    rules={[{ required: true, message: "Vui lòng nhập tiêu đề sản phẩm!" }]}
+            <div style={{ background: '#fff', padding: '24px', borderRadius: '8px' }}>
+                <h2>Thêm sản phẩm</h2>
+                <Form
+                    layout="vertical"
+                    onFinish={handleSubmit}
+                    initialValues={{
+                        title: "",
+                        description: "",
+                        color: "",
+                        material: "",
+                        stone: "",
+                        sex: "",
+                        price: 0,
+                        discount: 0,
+                        stock: 0,
+                        position: 0,
+                        featured: false,
+                        active: true,
+                    }}
                 >
-                    <Input />
-                </Form.Item>
-
-                {/* Danh mục */}
-                <Form.Item label="Danh mục" name="product_category_id">
-                    <Select
-                        placeholder="Chọn danh mục"
+                    {/* Tiêu đề */}
+                    <Form.Item
+                        label="Tiêu đề"
+                        name="title"
+                        rules={[{ required: true, message: "Vui lòng nhập tiêu đề sản phẩm!" }]}
                     >
-                        {productCategory?.map((category) => (
-                            <Select.Option key={category._id} value={category._id}>
-                                {category.title}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
+                        <Input />
+                    </Form.Item>
 
-                {/* Mô tả */}
-                <Form.Item label="Mô tả" name="description">
-                    <TextArea rows={4} />
-                </Form.Item>
+                    {/* Danh mục */}
+                    <Form.Item label="Danh mục" name="product_category_id">
+                        <Select
+                            placeholder="Chọn danh mục"
+                        >
+                            {productCategory?.map((category) => (
+                                <Select.Option key={category._id} value={category._id}>
+                                    {category.title}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
 
-                {/* Màu sắc */}
-                <Form.Item label="Màu sắc" name="color">
-                    <Select placeholder="Chọn màu sắc">
-                        <Select.Option value="Trắng">Trắng</Select.Option>
-                        <Select.Option value="Hồng">Hồng</Select.Option>
-                        <Select.Option value="Vàng">Vàng</Select.Option>
-                    </Select>
-                </Form.Item>
+                    {/* Mô tả */}
+                    <Form.Item label="Mô tả" name="description">
+                        <TextArea rows={4} />
+                    </Form.Item>
 
-                {/* Chất liệu */}
-                <Form.Item label="Chất liệu" name="material">
-                    <Select placeholder="Chọn chất liệu">
-                        <Select.Option value="Vàng">Vàng</Select.Option>
-                        <Select.Option value="Bạc">Bạc</Select.Option>
-                    </Select>
-                </Form.Item>
+                    {/* Màu sắc */}
+                    <Form.Item label="Màu sắc" name="color">
+                        <Select placeholder="Chọn màu sắc">
+                            <Select.Option value="Trắng">Trắng</Select.Option>
+                            <Select.Option value="Hồng">Hồng</Select.Option>
+                            <Select.Option value="Vàng">Vàng</Select.Option>
+                        </Select>
+                    </Form.Item>
 
-                {/* Ảnh (chỉ 1 ảnh) */}
-                {/* Đã chuyển xuống phần có rules bắt buộc bên dưới */}
+                    {/* Chất liệu */}
+                    <Form.Item label="Chất liệu" name="material">
+                        <Select placeholder="Chọn chất liệu">
+                            <Select.Option value="Vàng">Vàng</Select.Option>
+                            <Select.Option value="Bạc">Bạc</Select.Option>
+                        </Select>
+                    </Form.Item>
 
-                {/* Giá */}
-                <Form.Item label="Giá" name="price" rules={[{ required: true, message: "Vui lòng nhập giá sản phẩm!" }]}>
-                    <InputNumber
-                        min={0}
-                        style={{ width: "100%" }}
-                        formatter={(value) => {
-                            if (!value) return '';
-                            return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                        }}
-                        parser={(value) => {
-                            if (!value) return 0;
-                            return value.replace(/\./g, '').replace(/[^\d]/g, '');
-                        }}
-                        addonAfter="đ"
-                    />
-                </Form.Item>
+                    {/* Ảnh (chỉ 1 ảnh) */}
+                    {/* Đã chuyển xuống phần có rules bắt buộc bên dưới */}
 
-                {/* Số lượng */}
-                <Form.Item label="Số lượng" name="stock" rules={[{ required: true, message: "Vui lòng nhập số lượng sản phẩm!" }]}>
-                    <InputNumber min={0} style={{ width: "100%" }} />
-                </Form.Item>
+                    {/* Giá */}
+                    <Form.Item label="Giá" name="price" rules={[{ required: true, message: "Vui lòng nhập giá sản phẩm!" }]}>
+                        <InputNumber
+                            min={0}
+                            style={{ width: "100%" }}
+                            formatter={(value) => {
+                                if (!value) return '';
+                                return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                            }}
+                            parser={(value) => {
+                                if (!value) return 0;
+                                return value.replace(/\./g, '').replace(/[^\d]/g, '');
+                            }}
+                            addonAfter="đ"
+                        />
+                    </Form.Item>
 
-                {/* Ảnh (bắt buộc - chỉ 1 ảnh) */}
-                <Form.Item label="Ảnh" name="image" rules={[{ required: true, message: "Vui lòng chọn ảnh sản phẩm!" }]}>
-                    <Upload
-                        listType="picture-card"
-                        maxCount={1}
-                        beforeUpload={() => false}
-                        showUploadList
-                        onChange={handleImageChange}
-                    >
-                        <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
-                    </Upload>
-                </Form.Item>
+                    {/* Số lượng */}
+                    <Form.Item label="Số lượng" name="stock" rules={[{ required: true, message: "Vui lòng nhập số lượng sản phẩm!" }]}>
+                        <InputNumber min={0} style={{ width: "100%" }} />
+                    </Form.Item>
 
-                {/* Vị trí */}
-                <Form.Item label="Vị trí" name="position" initialValue="Tự động tăng">
-                    <Input disabled />
-                </Form.Item>
+                    {/* Ảnh (bắt buộc - chỉ 1 ảnh) */}
+                    <Form.Item label="Ảnh" name="image" rules={[{ required: true, message: "Vui lòng chọn ảnh sản phẩm!" }]}>
+                        <Upload
+                            listType="picture-card"
+                            maxCount={1}
+                            beforeUpload={() => false}
+                            showUploadList
+                            onChange={handleImageChange}
+                        >
+                            <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                        </Upload>
+                    </Form.Item>
 
-                {/* Nổi bật */}
-                <Form.Item label="Nổi bật" name="featured">
-                    <Radio.Group>
-                        <Radio value={true}>Nổi bật</Radio>
-                        <Radio value={false}>Không</Radio>
-                    </Radio.Group>
-                </Form.Item>
+                    {/* Vị trí */}
+                    <Form.Item label="Vị trí" name="position" initialValue="Tự động tăng">
+                        <Input disabled />
+                    </Form.Item>
 
-                {/* Hoạt động */}
-                <Form.Item label="Hoạt động" name="active">
-                    <Radio.Group>
-                        <Radio value={true}>Hoạt động</Radio>
-                        <Radio value={false}>Dừng hoạt động</Radio>
-                    </Radio.Group>
-                </Form.Item>
+                    {/* Nổi bật */}
+                    <Form.Item label="Nổi bật" name="featured">
+                        <Radio.Group>
+                            <Radio value={true}>Nổi bật</Radio>
+                            <Radio value={false}>Không</Radio>
+                        </Radio.Group>
+                    </Form.Item>
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
-                        {loading ? 'Đang xử lý...' : 'Tạo mới sản phẩm'}
-                    </Button>
-                </Form.Item>
-            </Form>
+                    {/* Hoạt động */}
+                    <Form.Item label="Hoạt động" name="active">
+                        <Radio.Group>
+                            <Radio value={true}>Hoạt động</Radio>
+                            <Radio value={false}>Dừng hoạt động</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
+                            {loading ? 'Đang xử lý...' : 'Tạo mới sản phẩm'}
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </div>
         </div>
     );
 }

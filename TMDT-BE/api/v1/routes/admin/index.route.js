@@ -2,6 +2,7 @@ const productRoutes = require("./product.route");
 const productCategoryRoutes = require("./product-category.route");
 const accountRoutes = require("./account.route");
 const roleRoutes = require("./role.route");
+const dashboardRoutes = require("./dashboard.route");
 
 module.exports = (app) => {
     const PATH_API = "/api/v1/admin";
@@ -13,4 +14,6 @@ module.exports = (app) => {
     app.use(PATH_API + "/accounts", accountRoutes)
 
     app.use(PATH_API + "/roles", roleRoutes)
+
+    app.use(PATH_API + "/dashboard", dashboardRoutes)
 }

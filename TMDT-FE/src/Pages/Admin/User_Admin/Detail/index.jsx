@@ -33,32 +33,34 @@ function User_Detail() {
     }
 
     return (
-        <Form
-            layout="vertical"
-            initialValues={{
-                name: user?.fullName,
-                address: user?.address,
-                phone: user?.phone,
-                email: user?.email,
-                createdAt: formatDate(user?.createdAt)
-            }}
-        >
-            <Form.Item label="Tên khách hàng" name="name" >
-                <Input readOnly />
-            </Form.Item>
-            <Form.Item label="Địa chỉ" name="address" >
-                <Input readOnly />
-            </Form.Item>
-            <Form.Item label="Điện thoại" name="phone" >
-                <Input readOnly />
-            </Form.Item>
-            <Form.Item label="Email" name="email" >
-                <Input readOnly />
-            </Form.Item>
-            <Form.Item label="Ngày tạo" name="createdAt" >
-                <Input readOnly />
-            </Form.Item>
-            {/* <div> 
+        <div style={{ background: '#fff', padding: '24px', borderRadius: '8px' }}>
+            <h2>Xem khách hàng</h2>
+            <Form
+                layout="vertical"
+                initialValues={{
+                    name: user?.fullName,
+                    address: user?.address,
+                    phone: user?.phone,
+                    email: user?.email,
+                    createdAt: formatDate(user?.createdAt)
+                }}
+            >
+                <Form.Item label="Tên khách hàng" name="name" >
+                    <Input readOnly />
+                </Form.Item>
+                <Form.Item label="Địa chỉ" name="address" >
+                    <Input readOnly />
+                </Form.Item>
+                <Form.Item label="Điện thoại" name="phone" >
+                    <Input readOnly />
+                </Form.Item>
+                <Form.Item label="Email" name="email" >
+                    <Input readOnly />
+                </Form.Item>
+                <Form.Item label="Ngày tạo" name="createdAt" >
+                    <Input readOnly />
+                </Form.Item>
+                {/* <div> 
                 <p style={{marginBottom:20}}>Danh sách đơn hàng đã mua</p>
                 <Row className="product-grid-header" gutter={0}>
                     <Col span={6}>
@@ -109,8 +111,9 @@ function User_Detail() {
                         </Row>
                     ))
                 )}
-            </div> */}
-        </Form>
+            </Row> */}
+            </Form>
+        </div>
     );
 }
 

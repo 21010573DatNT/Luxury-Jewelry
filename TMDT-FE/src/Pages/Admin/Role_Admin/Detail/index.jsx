@@ -34,45 +34,48 @@ function Role_Detail() {
     };
 
     return (
-        <Form
-            layout="vertical"
-            initialValues={{
-                title: role?.title,
-                description: role?.description,
-                permissions: role?.permissions,
-            }}
-            onFinish={handleSubmit}
-        >
-            <Form.Item label="Tên quyền" name="title">
-                <Input readOnly />
-            </Form.Item>
+        <div style={{ background: '#fff', padding: '24px', borderRadius: '8px' }}>
+            <h2>Xem quyền</h2>
+            <Form
+                layout="vertical"
+                initialValues={{
+                    title: role?.title,
+                    description: role?.description,
+                    permissions: role?.permissions,
+                }}
+                onFinish={handleSubmit}
+            >
+                <Form.Item label="Tên quyền" name="title">
+                    <Input readOnly />
+                </Form.Item>
 
-            <Form.Item label="Mô tả" name="description">
-                <TextArea readOnly />
-            </Form.Item>
+                <Form.Item label="Mô tả" name="description">
+                    <TextArea readOnly />
+                </Form.Item>
 
-            <Form.Item label="Quyền" >
-                <Row gutter={[16, 16]}>
-                    {allPermissions.map((permission, index) => (
-                        <Col span={12} key={index}>
-                            <Row align="middle">
-                                <Col span={12}>
-                                    <strong>{permission}</strong>
-                                </Col>
-                                <Col span={12}>
-                                    <Checkbox
-                                        value={permission}
-                                        defaultChecked={role?.permissions.includes(permission)}
-                                        disabled={true}
-                                        style={{ pointerEvents: 'none', opacity: 1 }}
-                                    />
-                                </Col>
-                            </Row>
-                        </Col>
-                    ))}
-                </Row>
-            </Form.Item>
-        </Form>
+                <Form.Item label="Quyền" >
+                    <Row gutter={[16, 16]}>
+                        {allPermissions.map((permission, index) => (
+                            <Col span={12} key={index}>
+                                <Row align="middle">
+                                    <Col span={12}>
+                                        <strong>{permission}</strong>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Checkbox
+                                            value={permission}
+                                            defaultChecked={role?.permissions.includes(permission)}
+                                            disabled={true}
+                                            style={{ pointerEvents: 'none', opacity: 1 }}
+                                        />
+                                    </Col>
+                                </Row>
+                            </Col>
+                        ))}
+                    </Row>
+                </Form.Item>
+            </Form>
+        </div>
     );
 }
 

@@ -1,0 +1,666 @@
+// Dashboard styles
+.admin-dashboard {
+    padding: 32px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+
+    .dashboard-header {
+        margin-bottom: 32px;
+        padding: 32px 40px;
+        background: linear-gradient(135deg, #1e41db 0%, #020742 100%);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .dashboard-title {
+            color: white !important;
+            margin: 0 !important;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 28px;
+        }
+    }
+
+    // Stat Cards
+    .stats-overview {
+        margin-bottom: 32px;
+
+        .stat-card {
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            background: white;
+            border: 2px solid transparent;
+            padding: 24px;
+            height: 100%;
+
+            &:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            }
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+            }
+
+            .stat-icon {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                opacity: 0.15;
+                transition: all 0.3s ease;
+            }
+
+            &:hover .stat-icon {
+                opacity: 0.25;
+                transform: scale(1.1) rotate(5deg);
+            }
+
+            .stat-footer {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid #f0f0f0;
+            }
+
+            // Styling for Statistic component inside stat cards
+            .ant-statistic {
+                .ant-statistic-title {
+                    color: #8c8c8c;
+                    font-size: 14px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                }
+
+                .ant-statistic-content {
+                    color: #262626;
+                    font-size: 32px;
+                    font-weight: 700;
+                }
+            }
+
+            &.stat-card-revenue {
+                border-color: rgba(82, 196, 26, 0.2);
+
+                &::before {
+                    background: linear-gradient(90deg, #52c41a, #73d13d);
+                }
+
+                .stat-icon {
+                    color: #52c41a;
+                }
+
+                &:hover {
+                    border-color: #52c41a;
+                    box-shadow: 0 12px 40px rgba(82, 196, 26, 0.2);
+                }
+            }
+
+            &.stat-card-orders {
+                border-color: rgba(24, 144, 255, 0.2);
+
+                &::before {
+                    background: linear-gradient(90deg, #1890ff, #40a9ff);
+                }
+
+                .stat-icon {
+                    color: #1890ff;
+                }
+
+                &:hover {
+                    border-color: #1890ff;
+                    box-shadow: 0 12px 40px rgba(24, 144, 255, 0.2);
+                }
+            }
+
+            &.stat-card-customers {
+                border-color: rgba(114, 46, 209, 0.2);
+
+                &::before {
+                    background: linear-gradient(90deg, #722ed1, #9254de);
+                }
+
+                .stat-icon {
+                    color: #722ed1;
+                }
+
+                &:hover {
+                    border-color: #722ed1;
+                    box-shadow: 0 12px 40px rgba(114, 46, 209, 0.2);
+                }
+            }
+
+            &.stat-card-products {
+                border-color: rgba(250, 140, 22, 0.2);
+
+                &::before {
+                    background: linear-gradient(90deg, #fa8c16, #ffa940);
+                }
+
+                .stat-icon {
+                    color: #fa8c16;
+                }
+
+                &:hover {
+                    border-color: #fa8c16;
+                    box-shadow: 0 12px 40px rgba(250, 140, 22, 0.2);
+                }
+            }
+        }
+    }
+
+    // Order Status Card
+    .order-status-card {
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        height: 100%;
+        background: white !important;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .ant-card-body {
+            background: white !important;
+            color: #262626 !important;
+        }
+
+        .order-status-item {
+            margin-bottom: 20px;
+
+            .status-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+
+                .ant-typography {
+                    color: #262626 !important;
+                    font-size: 16px;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .order-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-top: 16px;
+
+            .ant-typography {
+                color: #262626 !important;
+                font-size: 14px;
+
+                &.ant-typography-secondary {
+                    color: #8c8c8c !important;
+                }
+            }
+        }
+    }
+
+    // Revenue Chart Card
+    .revenue-chart-card {
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        height: 100%;
+        background: white !important;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .ant-card-body {
+            background: white !important;
+        }
+
+        .recharts-surface {
+            background: white !important;
+        }
+
+        .recharts-cartesian-grid-horizontal line,
+        .recharts-cartesian-grid-vertical line {
+            stroke: #f0f0f0 !important;
+        }
+
+        .recharts-text {
+            fill: #595959 !important;
+        }
+    }
+
+    // Payment Method Card & Category Summary Card (equal height)
+    .payment-method-card,
+    .category-inventory-card {
+        height: 100%;
+
+        .ant-card-body {
+            min-height: 550px;
+        }
+
+        .payment-method-summary {
+            min-height: 150px;
+        }
+    }
+
+    .payment-method-summary {
+        margin-top: 20px;
+
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: #f0f0f0;
+                transform: translateX(4px);
+            }
+
+            .payment-label {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .payment-color {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    // Product Rank
+    .product-rank {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+
+        &.low-rank {
+            background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+            box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+        }
+    }
+
+    // Customer Segment Card
+    .customer-segment-card {
+        text-align: center;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        background: white;
+        border: 1px solid #f0f0f0;
+
+        &:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+    }
+
+    // Inventory Card
+    .inventory-card {
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        background: white;
+        border: 2px solid rgba(0, 0, 0, 0.05);
+        padding: 24px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .ant-card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 140px;
+        }
+
+        .ant-statistic {
+            .ant-statistic-title {
+                margin-bottom: 12px;
+                font-size: 14px;
+                min-height: 42px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        &.inventory-card-total {
+            border-color: rgba(24, 144, 255, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #e6f7ff 100%);
+
+            &:hover {
+                box-shadow: 0 12px 40px rgba(24, 144, 255, 0.2);
+            }
+        }
+
+        &.inventory-card-selling {
+            border-color: rgba(82, 196, 26, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f6ffed 100%);
+
+            &:hover {
+                box-shadow: 0 12px 40px rgba(82, 196, 26, 0.2);
+            }
+        }
+
+        &.inventory-card-low {
+            border-color: rgba(250, 173, 20, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #fffbe6 100%);
+
+            &:hover {
+                box-shadow: 0 12px 40px rgba(250, 173, 20, 0.2);
+            }
+        }
+
+        &.inventory-card-out {
+            border-color: rgba(255, 77, 79, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #fff1f0 100%);
+
+            &:hover {
+                box-shadow: 0 12px 40px rgba(255, 77, 79, 0.2);
+            }
+        }
+
+        &.inventory-card-old {
+            border-color: rgba(140, 140, 140, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+
+            &:hover {
+                box-shadow: 0 12px 40px rgba(140, 140, 140, 0.2);
+            }
+        }
+
+        &.inventory-card-bestseller {
+            border-color: rgba(114, 46, 209, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f9f0ff 100%);
+
+            &:hover {
+                box-shadow: 0 12px 40px rgba(114, 46, 209, 0.2);
+            }
+        }
+    }
+
+    // Customer Behavior Card
+    .customer-behavior-card {
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    // Customer Segment Card
+    .customer-segment-card {
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    // Financial Card
+    .financial-card {
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(82, 196, 26, 0.2);
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%) !important;
+        border: none !important;
+
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(82, 196, 26, 0.3);
+        }
+
+        .ant-statistic-title {
+            color: white !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+        }
+
+        .ant-statistic-content {
+            color: white !important;
+            font-size: 28px !important;
+            font-weight: 700 !important;
+        }
+    }
+
+    // Rating Distribution
+    .rating-distribution {
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+
+            .ant-progress {
+                flex: 1;
+            }
+        }
+    }
+
+    // Loading State
+    .dashboard-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        flex-direction: column;
+    }
+
+    // Cards
+    .ant-card {
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: 100%;
+
+        &:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .ant-card-head {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            font-weight: 600;
+            color: #262626;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .ant-statistic {
+            .ant-statistic-title {
+                color: #8c8c8c;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .ant-statistic-content {
+                color: #1890ff;
+                font-size: 32px;
+                font-weight: 700;
+            }
+        }
+    }
+
+    // Recent Orders & Top Products Cards (equal height)
+    .recent-orders-card,
+    .top-products-card {
+        .ant-card-body {
+            min-height: 500px;
+        }
+    }
+
+    // Table
+    .ant-table {
+        border-radius: 12px;
+        overflow: hidden;
+
+        .ant-table-thead>tr>th {
+            background: #fafafa;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .ant-table-tbody>tr {
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: #f5f5f5;
+            }
+        }
+    }
+
+    // Tags
+    .ant-tag {
+        border-radius: 6px;
+        padding: 4px 12px;
+        font-weight: 500;
+    }
+
+    // Progress
+    .ant-progress {
+        .ant-progress-bg {
+            border-radius: 10px;
+        }
+    }
+
+    // Lists
+    .ant-list-item {
+        padding: 16px !important;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: #fafafa;
+        }
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+        padding: 16px;
+
+        .dashboard-header {
+            padding: 16px;
+
+            .dashboard-title {
+                font-size: 20px;
+            }
+        }
+
+        .stats-overview {
+            .stat-card {
+                margin-bottom: 16px;
+            }
+        }
+    }
+}
+
+// Animation
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-dashboard {
+    .stats-overview>div {
+        animation: fadeInUp 0.5s ease-out forwards;
+
+        &:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        &:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        &:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+    }
+}
+
+// Custom Scrollbar
+.admin-dashboard {
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+
+        &:hover {
+            background: #555;
+        }
+    }
+}

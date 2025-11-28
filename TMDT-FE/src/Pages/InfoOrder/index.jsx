@@ -720,7 +720,7 @@ const InfoOrder = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <span>🚀 Đặt hàng ngay</span>
+                                        <span>Đặt hàng ngay</span>
                                     </>
                                 )}
                             </button>
@@ -729,7 +729,7 @@ const InfoOrder = () => {
                         {/* Security Note */}
                         <div className="order-security-note">
                             <small>
-                                🔒 Thông tin của bạn được bảo mật và mã hóa an
+                                Thông tin của bạn được bảo mật và mã hóa an
                                 toàn
                             </small>
                         </div>

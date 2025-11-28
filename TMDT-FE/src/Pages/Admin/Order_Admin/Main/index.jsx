@@ -208,7 +208,17 @@ function OrderAdmin() {
                                     align="middle"
                                 >
                                     <Col span={1}>{startIndex + index + 1}</Col>
-                                    <Col span={3}>{item.infoUser?.name}</Col>
+                                    <Col span={3}>
+                                        <span
+                                            style={{
+                                                cursor: 'pointer',
+                                                color: '#000000ff'
+                                            }}
+                                            onClick={() => navigate(`/admin/order/detail/${item._id}`)}
+                                        >
+                                            {item.infoUser?.name}
+                                        </span>
+                                    </Col>
                                     <Col span={3}>{item.infoUser?.phone}</Col>
                                     <Col span={2} style={{ textAlign: 'right', paddingRight: '20px' }}>{formatPrice(item.totalPrice)}</Col>
                                     <Col span={2}>{getTotalQuantity(item.product)}</Col>

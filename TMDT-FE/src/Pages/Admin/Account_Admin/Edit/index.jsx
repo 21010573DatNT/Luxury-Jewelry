@@ -49,44 +49,47 @@ function Account_Edit() {
     };
 
     return (
-        <Form
-            layout="vertical"
-            initialValues={{
-                name: account?.fullName,
-                phone: account?.phone,
-                email: account?.email,
-                role_id: account?.role_id, 
-                password: account?.password,
-            }}
-            onFinish={handleSubmit}
-        >
-            <Form.Item label="Tên tài khoản" name="name">
-                <Input />
-            </Form.Item>
-            <Form.Item label="Điện thoại" name="phone">
-                <Input />
-            </Form.Item>
-            <Form.Item label="Email" name="email">
-                <Input />
-            </Form.Item>
-            <Form.Item label="Mật khẩu" name="password">
-                <Input />
-            </Form.Item>
-            <Form.Item label="Quyền" name="role_id">
-                <Select>
-                    {roles?.map((item) => (
-                        <Option key={item._id} value={item._id}>
-                            {item.title}
-                        </Option>
-                    ))}
-                </Select>
-            </Form.Item>
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Cập nhật
-                </Button>
-            </Form.Item>
-        </Form>
+        <div style={{ background: '#fff', padding: '24px', borderRadius: '8px' }}>
+            <h2>Sửa tài khoản</h2>
+            <Form
+                layout="vertical"
+                initialValues={{
+                    name: account?.fullName,
+                    phone: account?.phone,
+                    email: account?.email,
+                    role_id: account?.role_id,
+                    password: account?.password,
+                }}
+                onFinish={handleSubmit}
+            >
+                <Form.Item label="Tên tài khoản" name="name">
+                    <Input />
+                </Form.Item>
+                <Form.Item label="Điện thoại" name="phone">
+                    <Input />
+                </Form.Item>
+                <Form.Item label="Email" name="email">
+                    <Input />
+                </Form.Item>
+                <Form.Item label="Mật khẩu" name="password">
+                    <Input />
+                </Form.Item>
+                <Form.Item label="Quyền" name="role_id">
+                    <Select>
+                        {roles?.map((item) => (
+                            <Option key={item._id} value={item._id}>
+                                {item.title}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Cập nhật
+                    </Button>
+                </Form.Item>
+            </Form>
+        </div>
     );
 }
 

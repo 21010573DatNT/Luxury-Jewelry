@@ -41,10 +41,10 @@ function Category_Edit() {
         });
 
         for (let [key, value] of formData.entries()) {
-        console.log(key, value);  // Xem các giá trị trong FormData
-    }
+            console.log(key, value);  // Xem các giá trị trong FormData
+        }
 
-        const res = await CategoryService.categoryUpdate(category_id,formData);
+        const res = await CategoryService.categoryUpdate(category_id, formData);
 
         if (res.code === 200) {
             message.success("Cập nhật danh mục thành công!");
@@ -59,53 +59,56 @@ function Category_Edit() {
     }
 
     return (
-        <Form
-            layout="vertical"
-            onFinish={handleSubmit}
-            initialValues={{
-                title: category?.title,
-                image: [],
-                position: category?.position,
-            }}
-        >
-            {/* Tiêu đề */}
-            <Form.Item label="Tiêu đề" name="title">
-                <Input />
-            </Form.Item>
+        <div style={{ background: '#fff', padding: '24px', borderRadius: '8px' }}>
+            <h2>Sửa danh mục sản phẩm</h2>
+            <Form
+                layout="vertical"
+                onFinish={handleSubmit}
+                initialValues={{
+                    title: category?.title,
+                    image: [],
+                    position: category?.position,
+                }}
+            >
+                {/* Tiêu đề */}
+                <Form.Item label="Tiêu đề" name="title">
+                    <Input />
+                </Form.Item>
 
-            {/* Ảnh */}
-            <Form.Item label="Ảnh" name="image">
-                <Upload
-                    listType="picture-card"
-                    maxCount={1}
-                    showUploadList={false}
-                    onChange={handleImageChange}
-                >
-                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
-                </Upload>
-                <img
-                    src={category?.thumbnail}
-                    alt="category"
-                    style={{
-                        width: 150,
-                        height: 150,
-                        objectFit: "cover",
-                        borderRadius: 6,
-                    }}
-                />
-            </Form.Item>
+                {/* Ảnh */}
+                <Form.Item label="Ảnh" name="image">
+                    <Upload
+                        listType="picture-card"
+                        maxCount={1}
+                        showUploadList={false}
+                        onChange={handleImageChange}
+                    >
+                        <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                    </Upload>
+                    <img
+                        src={category?.thumbnail}
+                        alt="category"
+                        style={{
+                            width: 150,
+                            height: 150,
+                            objectFit: "cover",
+                            borderRadius: 6,
+                        }}
+                    />
+                </Form.Item>
 
-            {/* Vị trí */}
-            <Form.Item label="Vị trí" name="position">
-                <Input placeholder="Tự động tăng" />
-            </Form.Item>
+                {/* Vị trí */}
+                <Form.Item label="Vị trí" name="position">
+                    <Input placeholder="Tự động tăng" />
+                </Form.Item>
 
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Cập nhật
-                </Button>
-            </Form.Item>
-        </Form>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Cập nhật
+                    </Button>
+                </Form.Item>
+            </Form>
+        </div>
     );
 }
 

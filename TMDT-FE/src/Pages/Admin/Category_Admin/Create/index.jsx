@@ -44,56 +44,59 @@ function Category_Create() {
     };
 
     return (
-        <Form
-            layout="vertical"
-            onFinish={handleSubmit}
-            initialValues={{
-                title: "",
-                image: [],
-                position: 1,
-            }}
-        >
-            {/* Tiêu đề */}
-            <Form.Item
-                label="Tiêu đề"
-                name="title"
-                rules={[
-                    {
-                        required: true,
-                        message: "Vui lòng nhập tiêu đề sản phẩm!",
-                    },
-                ]}
+        <div style={{ background: '#fff', padding: '24px', borderRadius: '8px' }}>
+            <h2>Thêm danh mục sản phẩm</h2>
+            <Form
+                layout="vertical"
+                onFinish={handleSubmit}
+                initialValues={{
+                    title: "",
+                    image: [],
+                    position: 1,
+                }}
             >
-                <Input />
-            </Form.Item>
-
-            {/* Ảnh */}
-            <Form.Item
-                label="Ảnh"
-                name="image"
-                rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
-            >
-                <Upload
-                    listType="picture-card"
-                    maxCount={1}
-                    showUploadList={false}
-                    onChange={handleImageChange}
+                {/* Tiêu đề */}
+                <Form.Item
+                    label="Tiêu đề"
+                    name="title"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Vui lòng nhập tiêu đề sản phẩm!",
+                        },
+                    ]}
                 >
-                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
-                </Upload>
-            </Form.Item>
+                    <Input />
+                </Form.Item>
 
-            {/* Vị trí */}
-            <Form.Item label="Vị trí" name="position">
-                <Input disabled placeholder="Tự động tăng" />
-            </Form.Item>
+                {/* Ảnh */}
+                <Form.Item
+                    label="Ảnh"
+                    name="image"
+                    rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
+                >
+                    <Upload
+                        listType="picture-card"
+                        maxCount={1}
+                        showUploadList={false}
+                        onChange={handleImageChange}
+                    >
+                        <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                    </Upload>
+                </Form.Item>
 
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Tạo mới
-                </Button>
-            </Form.Item>
-        </Form>
+                {/* Vị trí */}
+                <Form.Item label="Vị trí" name="position">
+                    <Input disabled placeholder="Tự động tăng" />
+                </Form.Item>
+
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Tạo mới
+                    </Button>
+                </Form.Item>
+            </Form>
+        </div>
     );
 }
 

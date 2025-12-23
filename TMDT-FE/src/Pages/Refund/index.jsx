@@ -76,19 +76,22 @@ const ReturnProductPage = () => {
                         : ""
                 );
                 console.log(values.purchaseDate.format("YYYY-MM-DD"));
-                setLoadingOrder(false);
-                if (res.products.length > 0) {
+                if (res && Array.isArray(res.products) && res.products.length > 0) {
                     setOrderProducts(res.products);
                     setFormData((prev) => ({ ...prev, ...values }));
                     setCurrentStep(1);
                 } else {
-                    message.error(
-                        "Không tìm thấy đơn hàng hoặc đơn hàng không có sản phẩm."
-                    );
+                    message.warning(res?.message || "Không có đơn hàng trong ngày đó");
                 }
-            } catch {
+            } catch (error) {
+                const apiMsg = error?.response?.data?.message;
+                if (apiMsg) {
+                    message.warning(apiMsg);
+                } else {
+                    message.error("Vui lòng điền đầy đủ thông tin bắt buộc");
+                }
+            } finally {
                 setLoadingOrder(false);
-                message.error("Vui lòng điền đầy đủ thông tin bắt buộc");
             }
         } else {
             // Bước 2: Lưu dữ liệu hoàn trả

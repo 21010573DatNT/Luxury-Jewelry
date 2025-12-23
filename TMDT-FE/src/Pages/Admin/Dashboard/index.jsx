@@ -198,6 +198,25 @@ const AdminDashboard = () => {
     // Màu cho biểu đồ - màu sáng hài hòa
     const COLORS = ["#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1", "#13c2c2"];
 
+    // Định dạng nhãn trục X theo ngày/tháng
+    const formatTimeLabel = (value) => {
+        const isDaily = Boolean(revenueChart[0]?.date);
+        if (isDaily) {
+            // value = YYYY-MM-DD
+            const d = new Date(value);
+            if (!isNaN(d)) return d.toLocaleDateString('vi-VN');
+            return value;
+        }
+        // value = MM/YYYY (giữ nguyên, chuẩn hóa số tháng 2 chữ số)
+        const parts = String(value).split('/');
+        if (parts.length === 2) {
+            const m = parts[0].padStart(2, '0');
+            const y = parts[1];
+            return `${m}/${y}`;
+        }
+        return value;
+    };
+
     if (loading || !stats) {
         return (
             <div style={{ textAlign: "center", padding: "100px" }}>
@@ -414,12 +433,14 @@ const AdminDashboard = () => {
                                     textAnchor="end"
                                     height={80}
                                     tick={{ fontSize: 12 }}
+                                    tickFormatter={formatTimeLabel}
                                 />
                                 <YAxis
                                     tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
                                 />
                                 <Tooltip
                                     formatter={(value) => [formatCurrency(value), "Doanh thu"]}
+                                    labelFormatter={formatTimeLabel}
                                 />
                                 <Area
                                     type="monotone"

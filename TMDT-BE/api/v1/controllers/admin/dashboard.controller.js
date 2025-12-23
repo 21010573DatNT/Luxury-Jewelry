@@ -7,32 +7,73 @@ const { createDateFilter } = require("../../../../helpers/dateFilter.helper");
 // [GET] /api/v1/admin/dashboard/stats
 module.exports.getStats = async (req, res) => {
     try {
-        const dateFilter = createDateFilter(req);
+        const dateFilter = createDateFilter(req); // createdAt-based (cho thống kê đơn hàng)
         const now = new Date();
 
-        // Lấy đơn hàng theo filter
+        // Helper: build updatedAt range for revenue recognition
+        const buildUpdatedAtRange = () => {
+            const { startDate, endDate, period } = req.query;
+            let range = {};
+            if (startDate && endDate) {
+                const start = new Date(startDate); start.setHours(0, 0, 0, 0);
+                const end = new Date(endDate); end.setHours(23, 59, 59, 999);
+                range = { updatedAt: { $gte: start, $lte: end } };
+            } else if (period && period !== 'all') {
+                switch (period) {
+                    case 'today': {
+                        const s = new Date(now); s.setHours(0, 0, 0, 0);
+                        const e = new Date(now); e.setHours(23, 59, 59, 999);
+                        range = { updatedAt: { $gte: s, $lte: e } };
+                        break;
+                    }
+                    case 'week': {
+                        const s = new Date(now); s.setDate(s.getDate() - 6); s.setHours(0, 0, 0, 0);
+                        const e = new Date(now); e.setHours(23, 59, 59, 999);
+                        range = { updatedAt: { $gte: s, $lte: e } };
+                        break;
+                    }
+                    case 'month': {
+                        const s = new Date(now.getFullYear(), now.getMonth(), 1); s.setHours(0, 0, 0, 0);
+                        const e = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+                        range = { updatedAt: { $gte: s, $lte: e } };
+                        break;
+                    }
+                    case 'year': {
+                        const s = new Date(now.getFullYear(), 0, 1); s.setHours(0, 0, 0, 0);
+                        const e = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+                        range = { updatedAt: { $gte: s, $lte: e } };
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            return range;
+        };
+
+        // Đơn hoàn thành theo updatedAt trong khoảng chọn (để tính doanh thu)
+        const revenueRange = buildUpdatedAtRange();
+        const finishedOrders = await Order.find({ deleted: false, status: 'finish', ...revenueRange });
+
+        // Lấy đơn hàng theo createdAt filter (cho thống kê tổng đơn/ trạng thái)
         const filteredOrders = await Order.find({ deleted: false, ...dateFilter });
 
-        // Tính tổng doanh thu
-        const totalRevenue = filteredOrders
-            .filter(order => order.status === 'finish')
-            .reduce((sum, order) => sum + order.totalPrice, 0);
+        // Tính tổng doanh thu (theo ngày hoàn thành)
+        const totalRevenue = finishedOrders.reduce((sum, order) => sum + order.totalPrice, 0);
 
-        // Tính doanh thu theo phương thức thanh toán
-        const revenueByPayment = filteredOrders
-            .filter(order => order.status === 'finish')
-            .reduce((acc, order) => {
-                const payment = order.payment || 'COD';
-                if (!acc[payment]) acc[payment] = 0;
-                acc[payment] += order.totalPrice;
-                return acc;
-            }, {});
+        // Doanh thu theo phương thức thanh toán (theo ngày hoàn thành)
+        const revenueByPayment = finishedOrders.reduce((acc, order) => {
+            const payment = order.payment || 'COD';
+            if (!acc[payment]) acc[payment] = 0;
+            acc[payment] += order.totalPrice;
+            return acc;
+        }, {});
 
         // Thống kê đơn hàng theo trạng thái
         const ordersByStatus = {
             waiting: filteredOrders.filter(o => o.status === 'waiting').length,
             shipping: filteredOrders.filter(o => o.status === 'shipping').length,
-            finish: filteredOrders.filter(o => o.status === 'finish').length,
+            finish: finishedOrders.length,
             refund: await Refund.countDocuments({ ...dateFilter })
         };
 
@@ -103,93 +144,114 @@ module.exports.getStats = async (req, res) => {
 // [GET] /api/v1/admin/dashboard/revenue-chart
 module.exports.getRevenueChart = async (req, res) => {
     try {
-        const { period } = req.query;
-        const dateFilter = createDateFilter(req);
+        const { period, startDate, endDate } = req.query;
         const now = new Date();
         let chartData = [];
 
-        // Nếu có filter custom, tính theo ngày trong khoảng đó
-        if (req.query.startDate && req.query.endDate) {
-            const start = new Date(req.query.startDate);
-            const end = new Date(req.query.endDate);
-            const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        // Helper: get revenue for range [start, end) aggregated by day
+        const getDailyBetween = async (start, end) => {
+            // Normalize to local midnight boundaries and include both start & end dates
+            const startNorm = new Date(start);
+            startNorm.setHours(0, 0, 0, 0);
+            const endNorm = new Date(end);
+            endNorm.setHours(0, 0, 0, 0);
 
-            for (let i = 0; i < diffDays; i++) {
-                const date = new Date(start);
-                date.setDate(date.getDate() + i);
-                date.setHours(0, 0, 0, 0);
+            const dayMs = 1000 * 60 * 60 * 24;
+            const days = Math.floor((endNorm - startNorm) / dayMs) + 1;
 
-                const nextDate = new Date(date);
-                nextDate.setDate(nextDate.getDate() + 1);
-
-                const orders = await Order.find({
-                    deleted: false,
-                    status: 'finish',
-                    createdAt: {
-                        $gte: date,
-                        $lt: nextDate
-                    }
-                });
-
-                const revenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
-
-                chartData.push({
-                    date: date.toISOString().split('T')[0],
-                    revenue: revenue,
-                    orders: orders.length
-                });
-            }
-        } else if (period === 'daily' || period === 'today' || period === 'week') {
-            // Doanh thu 30 ngày gần nhất
-            const days = period === 'week' ? 7 : 30;
-            for (let i = days - 1; i >= 0; i--) {
-                const date = new Date(now);
-                date.setDate(date.getDate() - i);
-                date.setHours(0, 0, 0, 0);
-
-                const nextDate = new Date(date);
-                nextDate.setDate(nextDate.getDate() + 1);
+            const data = [];
+            for (let i = 0; i < days; i++) {
+                const dayStart = new Date(startNorm);
+                dayStart.setDate(dayStart.getDate() + i);
+                const dayEnd = new Date(dayStart);
+                dayEnd.setDate(dayEnd.getDate() + 1);
 
                 const orders = await Order.find({
                     deleted: false,
                     status: 'finish',
-                    createdAt: {
-                        $gte: date,
-                        $lt: nextDate
-                    }
+                    updatedAt: { $gte: dayStart, $lt: dayEnd }
                 });
+                const revenue = orders.reduce((sum, o) => sum + o.totalPrice, 0);
 
-                const revenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
-
-                chartData.push({
-                    date: date.toISOString().split('T')[0],
-                    revenue: revenue,
+                const dateStr = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}`;
+                data.push({
+                    date: dateStr, // Local date (YYYY-MM-DD)
+                    revenue,
                     orders: orders.length
                 });
             }
+            return data;
+        };
+
+        // Helper: group orders by month label "MM/YYYY"
+        const groupByMonth = (orders) => {
+            const map = new Map();
+            orders.forEach(o => {
+                const d = new Date(o.updatedAt || o.createdAt);
+                const key = `${d.getMonth() + 1}/${d.getFullYear()}`;
+                const cur = map.get(key) || { month: key, revenue: 0, orders: 0, _date: new Date(d.getFullYear(), d.getMonth(), 1) };
+                cur.revenue += o.totalPrice;
+                cur.orders += 1;
+                map.set(key, cur);
+            });
+            // sort ascending by month
+            return Array.from(map.values()).sort((a, b) => a._date - b._date).map(({ _date, ...rest }) => rest);
+        };
+
+        if (startDate && endDate) {
+            // Custom range: show daily points within selected range (inclusive)
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            chartData = await getDailyBetween(start, end);
+        } else if (period === 'today') {
+            // Only today
+            const start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            chartData = await getDailyBetween(start, start);
+        } else if (period === 'week') {
+            // Last 7 days
+            const start = new Date(now);
+            start.setDate(start.getDate() - 6); // include today -> 7 days total
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(now);
+            chartData = await getDailyBetween(start, end);
+        } else if (period === 'month') {
+            // This month by day
+            const start = new Date(now.getFullYear(), now.getMonth(), 1);
+            const end = new Date(now.getFullYear(), now.getMonth() + 1, 0); // last day of month
+            chartData = await getDailyBetween(start, end);
+        } else if (period === 'year') {
+            // This year by month (always 12 months)
+            const yearStart = new Date(now.getFullYear(), 0, 1);
+            const yearEnd = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+            const orders = await Order.find({
+                deleted: false,
+                status: 'finish',
+                updatedAt: { $gte: yearStart, $lte: yearEnd }
+            });
+
+            // Initialize all months with zero values
+            const months = Array.from({ length: 12 }, (_, i) => ({
+                month: `${i + 1}/${now.getFullYear()}`,
+                revenue: 0,
+                orders: 0
+            }));
+
+            // Aggregate orders into corresponding month
+            orders.forEach(o => {
+                const d = new Date(o.updatedAt || o.createdAt);
+                if (d.getFullYear() === now.getFullYear()) {
+                    const idx = d.getMonth();
+                    months[idx].revenue += o.totalPrice;
+                    months[idx].orders += 1;
+                }
+            });
+
+            chartData = months;
         } else {
-            // Mặc định: Doanh thu 12 tháng gần nhất
-            for (let i = 11; i >= 0; i--) {
-                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-
-                const orders = await Order.find({
-                    deleted: false,
-                    status: 'finish',
-                    createdAt: {
-                        $gte: date,
-                        $lt: nextMonth
-                    }
-                });
-
-                const revenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
-
-                chartData.push({
-                    month: `${date.getMonth() + 1}/${date.getFullYear()}`,
-                    revenue: revenue,
-                    orders: orders.length
-                });
-            }
+            // 'all' or no period: show all time by month
+            const orders = await Order.find({ deleted: false, status: 'finish' });
+            chartData = groupByMonth(orders);
         }
 
         res.json({

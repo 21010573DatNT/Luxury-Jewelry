@@ -1,4 +1,5 @@
 const Order = require("../../models/order.model");
+const Refund = require("../../models/refund.model");
 const sendMail = require("../../../../helpers/sendMail");
 const orderEmailHelper = require("../../../../helpers/orderEmail.helper");
 
@@ -155,36 +156,72 @@ module.exports.getRefundProduct = async (req, res) => {
     try {
         const { email, phone, purchaseDate } = req.query;
 
+        if (!email || !phone || !purchaseDate) {
+            return res.status(400).json({ message: "Thiếu thông tin bắt buộc" });
+        }
+
         const dayjs = require("dayjs");
         const utc = require("dayjs/plugin/utc");
+        const timezone = require("dayjs/plugin/timezone");
         dayjs.extend(utc);
+        dayjs.extend(timezone);
 
-        // Chuyển purchaseDate sang đầu ngày và cuối ngày
-        const startOfDay = dayjs.utc(purchaseDate).startOf("day").toDate();
-        const endOfDay = dayjs.utc(purchaseDate).endOf("day").toDate();
+        // Diễn giải purchaseDate theo múi giờ Việt Nam để khớp ngày người dùng chọn
+        const tz = "Asia/Ho_Chi_Minh";
+        const startOfDay = dayjs.tz(purchaseDate, tz).startOf("day").utc().toDate();
+        const endOfDay = dayjs.tz(purchaseDate, tz).endOf("day").utc().toDate();
 
-        const order = await Order.findOne({
+        // Lọc theo trạng thái hoàn thành
+        const orders = await Order.find({
             "infoUser.email": email,
             "infoUser.phone": phone,
+            status: "finish",
             createdAt: {
                 $gte: startOfDay,
                 $lte: endOfDay,
             },
-        });
+        }).lean();
 
-        if (order) {
-            res.status(200).json({
-                products: order.product,
-            });
-        } else {
-            res.status(400).json({
-                message: "Không tìm thấy đơn hàng",
-            });
+        if (orders && orders.length > 0) {
+            // Lấy các sản phẩm đã được yêu cầu hoàn trả trong ngày để loại trừ
+            const existingRefunds = await Refund.find({
+                email,
+                phone,
+                purchaseDate: {
+                    $gte: startOfDay,
+                    $lte: endOfDay,
+                },
+            }).lean();
+
+            const refundedSet = new Set();
+            for (const rf of existingRefunds) {
+                for (const p of (rf.products || [])) {
+                    if (p && p.product_id) {
+                        refundedSet.add(p.product_id);
+                    }
+                }
+            }
+
+            const products = orders.flatMap((o) =>
+                (o.product || []).map((p) => ({
+                    ...p,
+                    order_id: o._id,
+                    orderCreatedAt: o.createdAt,
+                }))
+            );
+
+            const availableProducts = products.filter((p) => !refundedSet.has(p.product_id));
+
+            if (availableProducts.length === 0) {
+                return res.status(400).json({ message: "Không có đơn hàng" });
+            }
+
+            return res.status(200).json({ products: availableProducts });
         }
+
+        return res.status(400).json({ message: "Không có đơn hàng trong ngày đó" });
     } catch (error) {
-        res.status(500).json({
-            message: console.log(error),
-        });
+        return res.status(500).json({ message: "Lỗi hệ thống", error: String(error) });
     }
 };
 

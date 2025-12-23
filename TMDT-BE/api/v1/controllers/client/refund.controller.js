@@ -1,6 +1,6 @@
 const Refund = require("../../models/refund.model");
 const Order = require("../../models/order.model");
-const {sendMail} = require('../../../../helpers/sendMail');
+const { sendMail } = require('../../../../helpers/sendMail');
 
 //[GET] /api/vi/client/refund
 module.exports.getRefund = async (req, res) => {
@@ -43,10 +43,10 @@ module.exports.RefundDetail = async (req, res) => {
 };
 
 //[POST] /api/vi/client/refund/send-email
-module.exports.SendMail = async(req,res) => {
+module.exports.SendMail = async (req, res) => {
     const { to, subject, text } = req.body;
     try {
-        sendMail(to,subject,text)
+        sendMail(to, subject, text)
         res.json({ success: true, message: "Email sent!" });
     } catch (error) {
         console.error(error);
@@ -59,45 +59,86 @@ module.exports.postRefund = async (req, res) => {
     try {
         let { email, phone, purchaseDate, productIds } = req.body;
 
+        if (!email || !phone || !purchaseDate || !Array.isArray(productIds)) {
+            return res.status(400).json({ message: "Thiếu thông tin hoặc sản phẩm không hợp lệ" });
+        }
+
         const dayjs = require("dayjs");
+        const utc = require("dayjs/plugin/utc");
+        const timezone = require("dayjs/plugin/timezone");
+        dayjs.extend(utc);
+        dayjs.extend(timezone);
 
-        const startOfDay = dayjs(purchaseDate).startOf("day").toDate();
-        const endOfDay = dayjs(purchaseDate).endOf("day").toDate();
+        const tz = "Asia/Ho_Chi_Minh";
+        const startOfDay = dayjs.tz(purchaseDate, tz).startOf("day").utc().toDate();
+        const endOfDay = dayjs.tz(purchaseDate, tz).endOf("day").utc().toDate();
 
-        const order = await Order.findOne({
+        // Lấy tất cả đơn hoàn thành trong ngày (không dùng fallback)
+        const orders = await Order.find({
             "infoUser.email": email,
             "infoUser.phone": phone,
+            status: "finish",
             createdAt: {
                 $gte: startOfDay,
                 $lte: endOfDay,
             },
-        });
-        let products = [];
-        for (const productId of productIds) {
-            for (const product of order.product) {
-                if (product.product_id === productId){
-                    products.push(product);
+        }).lean();
+
+        if (!orders || orders.length === 0) {
+            return res.status(400).json({ message: "Không có đơn hàng trong ngày đó" });
+        }
+
+        // Chặn trùng lặp: nếu sản phẩm đã có yêu cầu hoàn trả trong ngày
+        const existingRefunds = await Refund.find({
+            email,
+            phone,
+            purchaseDate: {
+                $gte: startOfDay,
+                $lte: endOfDay,
+            },
+        }).lean();
+        const alreadyRefunded = new Set();
+        for (const rf of existingRefunds) {
+            for (const p of (rf.products || [])) {
+                if (p && p.product_id) alreadyRefunded.add(p.product_id);
+            }
+        }
+        const duplicateIds = productIds.filter((id) => alreadyRefunded.has(id));
+        if (duplicateIds.length > 0) {
+            return res.status(400).json({ message: "Sản phẩm đã được yêu cầu hoàn trả trước đó" });
+        }
+
+        // Gom các sản phẩm tương ứng với productIds từ nhiều đơn
+        const products = [];
+        const productIdSet = new Set(productIds);
+        for (const o of orders) {
+            for (const p of (o.product || [])) {
+                if (productIdSet.has(p.product_id)) {
+                    products.push({ ...p, order_id: o._id, orderCreatedAt: o.createdAt });
                 }
             }
         }
 
-        purchaseDate = Date(purchaseDate);
+        // Chuẩn hóa purchaseDate lưu theo Date
+        const purchaseDateStored = new Date(purchaseDate);
+
         const refund = new Refund({
             ...req.body,
-            products: products,
+            products,
             images: req.body.images,
-            purchaseDate: purchaseDate,
+            purchaseDate: purchaseDateStored,
             status: "Refunding",
         });
 
         await refund.save();
 
         res.status(200).json({
-            refund,
+            refund
         });
     } catch (error) {
         res.status(500).json({
-            message: console.log(error),
+            message: "Lỗi hệ thống",
+            error: String(error),
         });
     }
 };
@@ -112,7 +153,7 @@ module.exports.RefundEdit = async (req, res) => {
             req.body
         );
         res.status(200).json({
-            code:200,
+            code: 200,
             refund,
         });
     } catch (error) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Card,
     Button,
@@ -9,6 +9,7 @@ import {
     Row,
     Col,
     Divider,
+    Pagination,
 } from "antd";
 import * as OrderService from "../../../Services/orderService";
 import "./OrderUser.scss"
@@ -38,14 +39,35 @@ const OrderUser = () => {
         decode = null;
     }
     const [orders, setOrders] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 15;
 
     useEffect(() => {
-        const OrderUser = async () => {
+        if (!decode?.id) {
+            setOrders([]);
+            return;
+        }
+        const fetchOrderUser = async () => {
             const res = await OrderService.OrderOfUser(decode.id);
-            setOrders(res.listOrderUser);
+            setOrders(res.listOrderUser || []);
         };
-        OrderUser();
+        fetchOrderUser();
     }, [decode?.id]);
+
+    // Sort orders by newest first (createdAt descending)
+    const sortedOrders = useMemo(() => {
+        return [...orders].sort((a, b) => {
+            const da = new Date(a.createdAt).getTime();
+            const db = new Date(b.createdAt).getTime();
+            return db - da;
+        });
+    }, [orders]);
+
+    // Paginate: 10 orders per page
+    const paginatedOrders = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return sortedOrders.slice(start, start + pageSize);
+    }, [sortedOrders, currentPage]);
 
     const showOrderDetail = (order) => {
         setSelectedOrder(order);
@@ -95,9 +117,9 @@ const OrderUser = () => {
                     </Row>
                 </div>
                 <Divider style={{ margin: 0 }} />
-                {orders.map((order, index) => (
+                {paginatedOrders.map((order) => (
                     <div
-                        key={order.orderCode}
+                        key={order._id || order.orderID}
                         style={{
                             padding: "8px 0",
                             borderBottom: "1px solid #f0f0f0",
@@ -139,6 +161,15 @@ const OrderUser = () => {
                         </Row>
                     </div>
                 ))}
+                <div style={{ display: "flex", justifyContent: "center", padding: "12px 0" }}>
+                    <Pagination
+                        current={currentPage}
+                        pageSize={pageSize}
+                        total={sortedOrders.length}
+                        onChange={(page) => setCurrentPage(page)}
+                        showSizeChanger={false}
+                    />
+                </div>
             </Card>
 
             {/* Modal chi tiết đơn hàng */}
@@ -253,6 +284,7 @@ const OrderUser = () => {
                             <Table
                                 columns={itemColumns}
                                 dataSource={selectedOrder.product}
+                                rowKey={(item) => item.product_id}
                                 pagination={false}
                                 size="small"
                                 className="items-table"

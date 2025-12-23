@@ -1,8 +1,21 @@
 import React from 'react';
 import { FacebookOutlined, InstagramOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { message } from 'antd';
 import './Footer.scss';
 
 function Footer() {
+    const user = useSelector((state) => state.user);
+    const navigate = useNavigate();
+
+    const handleClickRegister = () => {
+        if (user?.token) {
+            message.info('Bạn đã đăng nhập.');
+            return;
+        }
+        navigate('/register');
+    };
     return (
         <footer className="footer">
             <div className="footer-top">
@@ -11,7 +24,7 @@ function Footer() {
                     <p>Nhận ưu đãi 10% cho khách hàng mới</p>
                 </div>
                 <div className="footer-top-right">
-                    <button className="register-button">ĐĂNG KÝ NGAY</button>
+                    <button className="register-button" onClick={handleClickRegister}>ĐĂNG KÝ NGAY</button>
                 </div>
             </div>
             <div className="footer-middle">

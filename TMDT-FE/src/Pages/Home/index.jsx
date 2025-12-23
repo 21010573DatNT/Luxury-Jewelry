@@ -62,7 +62,7 @@ function Home() {
 
     return (
         <div className="home">
-            <SliderComponets arrSlider={[ Banner3, Banner4, Banner5, Banner6]} />
+            <SliderComponets arrSlider={[Banner3, Banner4, Banner5, Banner6]} />
 
             {/* Featured Products Section */}
             <section className="featured-products-section">
@@ -87,7 +87,7 @@ function Home() {
                     <div className="products-grid">
                         {product?.map((item) => {
                             return (
-                                <div className="product-popular" onClick={() => handleProductDetail(item._id)}>
+                                <div className="product-popular" key={item._id} onClick={() => handleProductDetail(item._id)}>
                                     <CardProduct
                                         title={item.title}
                                         img={item.thumbnail}

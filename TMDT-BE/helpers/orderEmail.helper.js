@@ -175,7 +175,7 @@ module.exports.generateOrderConfirmationEmail = (orderData) => {
                                 📧 ${process.env.EMAIL_USER || 'support@luxuryjewelry.com'}
                             </p>
                             <p style="margin: 0 0 20px 0; color: #c41e3a; font-weight: bold; font-size: 14px;">
-                                📞 Hotline: 1900 xxxx
+                                📞 Hotline: 0912145568
                             </p>
                             <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px;">
                                 <p style="margin: 0; color: #999; font-size: 12px;">

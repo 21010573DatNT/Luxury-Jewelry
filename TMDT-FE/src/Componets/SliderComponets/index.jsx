@@ -1,9 +1,10 @@
 import React from "react";
 import Slider from "react-slick";
-import {Image} from "antd";
+import { Image } from "antd";
+import { Link } from "react-router-dom";
 
 
-const SliderComponets = ({arrSlider}) => {
+const SliderComponets = ({ arrSlider }) => {
   const settings = {
     dots: true,
     infinite: true,
@@ -15,10 +16,12 @@ const SliderComponets = ({arrSlider}) => {
   };
   return (
     <Slider {...settings}>
-      {arrSlider.map((image,index) => {
+      {arrSlider.map((image, index) => {
         return (
           <div key={index}>
-            <Image src={image} alt="slider" preview={false}/>
+            <Link to="/products">
+              <Image src={typeof image === "string" ? image : image?.src} alt="slider" preview={false} />
+            </Link>
           </div>
         );
       })}

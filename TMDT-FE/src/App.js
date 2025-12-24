@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { updateUser } from "./Redux/reducers/userReducer";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -156,83 +156,69 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 {/*---------- Router Admin ---------- */}
-                {token_admin ? (
-                    <Route path="/admin" element={<Admin />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="product" element={<ProductAdmin />} />
-                        <Route
-                            path="product/detail/:product_id"
-                            element={<Product_Detail />}
-                        />
-                        <Route
-                            path="product/edit/:product_id"
-                            element={<Product_Edit />}
-                        />
-                        <Route
-                            path="product/create"
-                            element={<Product_Create />}
-                        />
-                        <Route path="category" element={<CategoryAdmin />} />
-                        <Route
-                            path="category/detail/:category_id"
-                            element={<Category_Detail />}
-                        />
-                        <Route
-                            path="category/create"
-                            element={<Category_Create />}
-                        />
-                        <Route
-                            path="category/edit/:category_id"
-                            element={<Category_Edit />}
-                        />
-                        <Route path="order" element={<OrderAdmin />} />
-                        <Route
-                            path="order/detail/:order_id"
-                            element={<Order_Detail />}
-                        />
-                        <Route
-                            path="order/edit/:order_id"
-                            element={<Order_Edit />}
-                        />
-                        <Route path="customer" element={<UserAdmin />} />
-                        <Route
-                            path="customer/detail/:user_id"
-                            element={<User_Detail />}
-                        />
-                        <Route path="account" element={<AccountAdmin />} />
-                        <Route
-                            path="account/detail/:account_id"
-                            element={<Account_Detail />}
-                        />
-                        <Route
-                            path="account/edit/:account_id"
-                            element={<Account_Edit />}
-                        />
-                        <Route
-                            path="account/create"
-                            element={<Account_Create />}
-                        />
-                        <Route path="role" element={<RoleAdmin />} />
-                        <Route
-                            path="role/detail/:role_id"
-                            element={<Role_Detail />}
-                        />
-                        <Route
-                            path="role/edit/:role_id"
-                            element={<Role_Edit />}
-                        />
-                        <Route path="role/create" element={<Role_Create />} />
-                        <Route path="refund" element={<RefundAdmin />} />
-                        <Route
-                            path="refund/detail/:refund_id"
-                            element={<Refund_Detail />}
-                        />
-                        <Route
-                            path="refund/edit/:refund_id"
-                            element={<Refund_Edit />}
-                        />
-                    </Route>
-                ) : null}
+                <Route
+                    path="/admin"
+                    element={
+                        token_admin ? (
+                            <Admin />
+                        ) : (
+                            <Navigate to="/admin/login" replace />
+                        )
+                    }
+                >
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="product" element={<ProductAdmin />} />
+                    <Route
+                        path="product/detail/:product_id"
+                        element={<Product_Detail />}
+                    />
+                    <Route
+                        path="product/edit/:product_id"
+                        element={<Product_Edit />}
+                    />
+                    <Route path="product/create" element={<Product_Create />} />
+                    <Route path="category" element={<CategoryAdmin />} />
+                    <Route
+                        path="category/detail/:category_id"
+                        element={<Category_Detail />}
+                    />
+                    <Route path="category/create" element={<Category_Create />} />
+                    <Route
+                        path="category/edit/:category_id"
+                        element={<Category_Edit />}
+                    />
+                    <Route path="order" element={<OrderAdmin />} />
+                    <Route
+                        path="order/detail/:order_id"
+                        element={<Order_Detail />}
+                    />
+                    <Route path="order/edit/:order_id" element={<Order_Edit />} />
+                    <Route path="customer" element={<UserAdmin />} />
+                    <Route
+                        path="customer/detail/:user_id"
+                        element={<User_Detail />}
+                    />
+                    <Route path="account" element={<AccountAdmin />} />
+                    <Route
+                        path="account/detail/:account_id"
+                        element={<Account_Detail />}
+                    />
+                    <Route
+                        path="account/edit/:account_id"
+                        element={<Account_Edit />}
+                    />
+                    <Route path="account/create" element={<Account_Create />} />
+                    <Route path="role" element={<RoleAdmin />} />
+                    <Route path="role/detail/:role_id" element={<Role_Detail />} />
+                    <Route path="role/edit/:role_id" element={<Role_Edit />} />
+                    <Route path="role/create" element={<Role_Create />} />
+                    <Route path="refund" element={<RefundAdmin />} />
+                    <Route
+                        path="refund/detail/:refund_id"
+                        element={<Refund_Detail />}
+                    />
+                    <Route path="refund/edit/:refund_id" element={<Refund_Edit />} />
+                </Route>
 
                 <Route path="/admin/login" element={<Login_Admin />} />
             </Routes>

@@ -1,7 +1,7 @@
 import "./App.css";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { updateUser } from "./Redux/reducers/userReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -56,7 +56,7 @@ import ProductTest from "./Pages/ProductTest";
 function App() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const token_admin = Cookies.get("token");
+    const token_admin = useSelector((state) => state.account.token);
 
     useEffect(() => {
         const isOnAdminRoute = window.location.pathname.startsWith("/admin");

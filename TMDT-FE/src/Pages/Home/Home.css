@@ -2,6 +2,8 @@
 
 .home {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    width: 100%;
+    overflow: hidden;
 }
 
 .container {
@@ -15,7 +17,8 @@
     padding: 80px 0;
     background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
     position: relative;
-   overflow: auto;;
+    overflow: auto;
+    ;
 }
 
 .featured-products-section::before {
@@ -25,7 +28,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         radial-gradient(circle at 20% 80%, rgba(144, 202, 249, 0.2) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
     pointer-events: none;
@@ -216,24 +219,24 @@
     .section-title {
         font-size: 2.2rem;
     }
-    
+
     .section-subtitle {
         font-size: 1rem;
     }
-    
+
     .products-grid {
         padding: 20px;
     }
-    
+
     .features-grid {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-    
+
     .featured-products-section {
         padding: 60px 0;
     }
-    
+
     .features-section {
         padding: 60px 0;
     }
@@ -243,11 +246,11 @@
     .section-title {
         font-size: 1.8rem;
     }
-    
+
     .container {
         padding: 0 15px;
     }
-    
+
     .view-more-btn {
         padding: 12px 25px;
         font-size: 14px;

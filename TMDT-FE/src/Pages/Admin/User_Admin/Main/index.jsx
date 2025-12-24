@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Row, Col, message } from "antd";
+import { Button, Input, Row, Col, message, Pagination } from "antd";
 import {
     PlusOutlined,
     SearchOutlined,
@@ -14,6 +14,8 @@ import { TakePermissions } from "../../../../Componets/TakePermissions";
 
 function UserAdmin() {
     const [users, setUsers] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 15;
     const navigate = useNavigate();
     const permissions = TakePermissions();
 
@@ -28,6 +30,7 @@ function UserAdmin() {
     const getUserSearch = async (val) => {
         const res = await UserService.UserSearch(val);
         setUsers(res.users);
+        setCurrentPage(1);
     };
 
     const onSearchChange = async (e) => {
@@ -41,6 +44,7 @@ function UserAdmin() {
             // Sắp xếp theo thời gian tạo mới nhất
             const sortedUsers = res.users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setUsers(sortedUsers);
+            setCurrentPage(1);
         };
         UsersGet();
     }, []);
@@ -48,11 +52,29 @@ function UserAdmin() {
     const handleDelete = async (id) => {
         const res = await UserService.UserDelete(id);
         if (res.code === 200) {
-            setUsers((prevUser) => prevUser.filter((user) => user._id !== id));
+            setUsers((prevUser) => {
+                const updated = prevUser.filter((user) => user._id !== id);
+                // Adjust page if current page exceeds range after deletion
+                const newTotal = updated.length;
+                const maxPage = Math.max(1, Math.ceil(newTotal / pageSize));
+                if (currentPage > maxPage) {
+                    setCurrentPage(maxPage);
+                }
+                return updated;
+            });
             message.success("Xóa khách hàng thành công!");
         } else {
             message.error("Xóa khách hàng thất bại!");
         }
+    };
+
+    // Pagination logic
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedUsers = users.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -104,14 +126,14 @@ function UserAdmin() {
                                 <Col span={24}>Không có khách hàng.</Col>
                             </Row>
                         ) : (
-                            users.map((item, index) => (
+                            paginatedUsers.map((item, index) => (
                                 <Row
                                     className="user-grid-row"
                                     key={item.key}
                                     gutter={0}
                                     align="middle"
                                 >
-                                    <Col span={2}>{(index += 1)}</Col>
+                                    <Col span={2}>{startIndex + index + 1}</Col>
                                     <Col span={3}>{item.fullName}</Col>
                                     <Col span={3}>{item.email}</Col>
                                     <Col span={4}>{item.phone}</Col>
@@ -151,6 +173,17 @@ function UserAdmin() {
                             ))
                         )}
                     </div>
+                    {users.length > 0 && (
+                        <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
+                            <Pagination
+                                current={currentPage}
+                                pageSize={pageSize}
+                                total={users.length}
+                                onChange={handlePageChange}
+                                showSizeChanger={false}
+                            />
+                        </div>
+                    )}
                 </>
             ) : (
                 <>

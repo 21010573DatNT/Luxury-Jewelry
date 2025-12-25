@@ -5,6 +5,7 @@ const Role = require("../../models/role.model");
 const jwtHelper = require("../../../../helpers/jwt.helper");
 const md5 = require("md5");
 const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
 
 // [GET] /api/v1/admin/accounts
 module.exports.index = async (req, res) => {
@@ -20,13 +21,15 @@ module.exports.index = async (req, res) => {
     }
     // Search
 
-    const accounts = await Account.find(find);
-
+    const accounts = await Account.find(find).lean();
 
     for (const account of accounts) {
-        const role = await Role.findById(account.role_id);
-        account.role_name = role ? role.title : null;
-        await account.save();
+        if (account.role_id && mongoose.Types.ObjectId.isValid(account.role_id)) {
+            const role = await Role.findById(account.role_id);
+            account.role_name = role ? role.title : null;
+        } else {
+            account.role_name = null;
+        }
     }
 
     res.json(accounts);
@@ -173,12 +176,15 @@ module.exports.loginAdmin = async (req, res) => {
                 });
             }
 
-            const role = await Role.findById(account.role_id);
+            let role = null;
+            if (account.role_id && mongoose.Types.ObjectId.isValid(account.role_id)) {
+                role = await Role.findById(account.role_id);
+            }
 
             const payload = {
                 _id: account._id,
                 fullName: account.fullName,
-                permissions: role.permissions
+                permissions: role ? role.permissions : []
             };
 
             account.token = await jwtHelper.accessToken(payload);

@@ -164,24 +164,13 @@ module.exports.loginAdmin = async (req, res) => {
             const inputPassword = String(password || "");
             const inputPasswordMd5 = md5(inputPassword);
 
-            const storedPassword = String(account.password || "");
-            const looksLikeBcrypt = storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$") || storedPassword.startsWith("$2y$");
-
-            let isPasswordValid = storedPassword === inputPasswordMd5 || storedPassword === inputPassword;
-            if (!isPasswordValid && looksLikeBcrypt) {
-                isPasswordValid = await bcrypt.compare(inputPassword, storedPassword);
-            }
+            const isPasswordValid = account.password === inputPasswordMd5;
 
             if (!isPasswordValid) {
                 return res.status(400).json({
                     code: 400,
                     message: "Email hoặc mật khẩu không đúng",
                 });
-            }
-
-            // Optional migration from plain-text to md5
-            if (storedPassword === inputPassword) {
-                account.password = inputPasswordMd5;
             }
 
             const role = await Role.findById(account.role_id);

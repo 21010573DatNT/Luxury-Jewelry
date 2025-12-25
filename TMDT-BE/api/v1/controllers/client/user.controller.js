@@ -165,21 +165,13 @@ module.exports.login = async (req, res) => {
     const inputPassword = String(req.body.password || "");
     const inputPasswordMd5 = md5(inputPassword);
 
-    // Backward compatible:
-    // - new users: stored password is md5
-    // - old users: stored password may be plain text
-    const isPasswordValid = user.password === inputPasswordMd5 || user.password === inputPassword;
+    const isPasswordValid = user.password === inputPasswordMd5;
     if (!isPasswordValid) {
         res.json({
             code: 400,
             message: "Sai mật khẩu",
         });
         return;
-    }
-
-    // Migrate old plain-text password to md5 on successful login
-    if (user.password === inputPassword) {
-        user.password = inputPasswordMd5;
     }
 
     user.token = await jwtHelper.accessToken({

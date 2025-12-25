@@ -55,6 +55,10 @@ function ProductDetail() {
     };
 
     const handleClickCart = async () => {
+        if (amount > product.stock) {
+            message.error(`Số lượng sản phẩm có sẵn chỉ còn ${product.stock}`);
+            return;
+        }
         await ActionUserService.UserAction(data);
         const orderItem = {
             name: product?.title,
@@ -74,6 +78,10 @@ function ProductDetail() {
     };
 
     const handleClickBuy = async () => {
+        if (amount > product.stock) {
+            message.error(`Số lượng sản phẩm có sẵn chỉ còn ${product.stock}`);
+            return;
+        }
         await ActionUserService.UserAction(data);
         const orderItem = {
             name: product?.title,
@@ -335,10 +343,10 @@ function ProductDetail() {
                                     <Button
                                         type="primary"
                                         size="large"
-                                        disabled={!product.stock || product.stock <= 0}
+                                        disabled={!product.stock || product.stock <= 0 || amount > product.stock}
                                         style={{
-                                            background: product.stock > 0 ? "#d7263d" : "#d9d9d9",
-                                            borderColor: product.stock > 0 ? "#d7263d" : "#d9d9d9",
+                                            background: product.stock > 0 && amount <= product.stock ? "#d7263d" : "#d9d9d9",
+                                            borderColor: product.stock > 0 && amount <= product.stock ? "#d7263d" : "#d9d9d9",
                                             borderRadius: 10,
                                             padding: "0 36px",
                                             fontWeight: 600,
@@ -350,11 +358,11 @@ function ProductDetail() {
                                     </Button>
                                     <Button
                                         size="large"
-                                        disabled={!product.stock || product.stock <= 0}
+                                        disabled={!product.stock || product.stock <= 0 || amount > product.stock}
                                         style={{
                                             borderRadius: 10,
-                                            borderColor: product.stock > 0 ? "#d7263d" : "#d9d9d9",
-                                            color: product.stock > 0 ? "#d7263d" : "#999",
+                                            borderColor: product.stock > 0 && amount <= product.stock ? "#d7263d" : "#d9d9d9",
+                                            color: product.stock > 0 && amount <= product.stock ? "#d7263d" : "#999",
                                             padding: "0 36px",
                                             fontWeight: 600,
                                             height: 48,
@@ -428,7 +436,7 @@ function ProductDetail() {
                         <div
                             style={{
                                 background: "#fff",
-                                borderRadius: 20,  
+                                borderRadius: 20,
                                 padding: "48px 56px",
                                 marginBottom: 60,
                                 textAlign: "left",

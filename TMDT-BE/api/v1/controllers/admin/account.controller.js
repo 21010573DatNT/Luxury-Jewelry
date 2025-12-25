@@ -3,6 +3,8 @@ const searchHelper = require("../../../../helpers/search.helper");
 const generateHelper = require("../../../../helpers/generate");
 const Role = require("../../models/role.model");
 const jwtHelper = require("../../../../helpers/jwt.helper");
+const md5 = require("md5");
+const bcrypt = require("bcryptjs");
 
 // [GET] /api/v1/admin/accounts
 module.exports.index = async (req, res) => {
@@ -50,7 +52,8 @@ module.exports.detail = async (req, res) => {
 // [POST] /api/v1/admin/accounts/create
 module.exports.create = async (req, res) => {
     try {
-        const password = req.body.password;
+        const password = String(req.body.password || "");
+        const hashedPassword = md5(password);
 
         const existEmail = await Account.findOne({
             email: req.body.email,
@@ -66,7 +69,7 @@ module.exports.create = async (req, res) => {
             const account = new Account({
                 fullName: req.body.fullName,
                 email: req.body.email,
-                password: password,
+                password: hashedPassword,
                 phone: req.body.phone,
                 role_id: req.body.role_id,
                 avatar: req.body.avatar,
@@ -94,6 +97,10 @@ module.exports.create = async (req, res) => {
 module.exports.edit = async (req, res) => {
     try {
         const id = req.params.id;
+
+        if (Object.prototype.hasOwnProperty.call(req.body, "password")) {
+            req.body.password = md5(String(req.body.password || ""));
+        }
 
         await Account.updateOne(
             {
@@ -146,10 +153,7 @@ module.exports.delete = async (req, res) => {
 module.exports.loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const account = await Account.findOne({
-            email: email,
-            password: password,
-        });
+        const account = await Account.findOne({ email: email });
 
         if (!account) {
             res.status(400).json({
@@ -157,6 +161,29 @@ module.exports.loginAdmin = async (req, res) => {
                 message: "Email hoặc mật khẩu không đúng",
             });
         } else {
+            const inputPassword = String(password || "");
+            const inputPasswordMd5 = md5(inputPassword);
+
+            const storedPassword = String(account.password || "");
+            const looksLikeBcrypt = storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$") || storedPassword.startsWith("$2y$");
+
+            let isPasswordValid = storedPassword === inputPasswordMd5 || storedPassword === inputPassword;
+            if (!isPasswordValid && looksLikeBcrypt) {
+                isPasswordValid = await bcrypt.compare(inputPassword, storedPassword);
+            }
+
+            if (!isPasswordValid) {
+                return res.status(400).json({
+                    code: 400,
+                    message: "Email hoặc mật khẩu không đúng",
+                });
+            }
+
+            // Optional migration from plain-text to md5
+            if (storedPassword === inputPassword) {
+                account.password = inputPasswordMd5;
+            }
+
             const role = await Role.findById(account.role_id);
 
             const payload = {

@@ -33,7 +33,7 @@ function Account_Detail() {
                     phone: account?.phone,
                     email: account?.email,
                     role: account?.role_name,
-                    password: account?.password
+                    password: "********"
                 }}
             >
                 <Form.Item label="Tên tài khoản" name="name" >

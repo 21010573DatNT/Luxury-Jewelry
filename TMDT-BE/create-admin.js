@@ -1,7 +1,7 @@
 // Script to create an admin account
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const md5 = require('md5');
 const Account = require('./api/v1/models/account.model');
 const Role = require('./api/v1/models/role.model');
 const db = require('./config/database');
@@ -31,7 +31,7 @@ async function createAdminAccount() {
         process.exit(0);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = md5(String(password || ''));
 
     await Account.create({
         fullName,

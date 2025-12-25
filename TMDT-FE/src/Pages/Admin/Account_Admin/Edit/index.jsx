@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as AccountService from "../../../../Services/accountService";
 import * as RoleService from "../../../../Services/roleService";
-import Password from "antd/es/input/Password";
 const { Option } = Select;
 
 function Account_Edit() {
@@ -35,11 +34,19 @@ function Account_Edit() {
     }
 
     const handleSubmit = async (data) => {
-        // Gửi request cập nhật tài khoản, sử dụng role_id thay vì role_name
-        const res = await AccountService.AccountEdit(account_id, {
-            ...data,
-            role_id: data.role_id // Chỉ gửi role_id thực sự
-        });
+        const payload = {
+            fullName: data.fullName,
+            phone: data.phone,
+            email: data.email,
+            role_id: data.role_id,
+        };
+
+        // Only send password when user actually enters a new one
+        if (String(data.password || "").trim()) {
+            payload.password = data.password;
+        }
+
+        const res = await AccountService.AccountEdit(account_id, payload);
         if (res.code === 200) {
             message.success("Cập nhật thành công!");
             navigate(`/admin/account`);
@@ -54,15 +61,15 @@ function Account_Edit() {
             <Form
                 layout="vertical"
                 initialValues={{
-                    name: account?.fullName,
+                    fullName: account?.fullName,
                     phone: account?.phone,
                     email: account?.email,
                     role_id: account?.role_id,
-                    password: account?.password,
+                    password: "",
                 }}
                 onFinish={handleSubmit}
             >
-                <Form.Item label="Tên tài khoản" name="name">
+                <Form.Item label="Tên tài khoản" name="fullName">
                     <Input />
                 </Form.Item>
                 <Form.Item label="Điện thoại" name="phone">
@@ -72,7 +79,7 @@ function Account_Edit() {
                     <Input />
                 </Form.Item>
                 <Form.Item label="Mật khẩu" name="password">
-                    <Input />
+                    <Input.Password placeholder="Để trống nếu không đổi" />
                 </Form.Item>
                 <Form.Item label="Quyền" name="role_id">
                     <Select>

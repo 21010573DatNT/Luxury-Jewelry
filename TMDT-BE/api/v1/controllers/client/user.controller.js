@@ -82,8 +82,6 @@ module.exports.delete = async (req, res) => {
 
 // [POST] api/v1/user/register
 module.exports.register = async (req, res) => {
-    req.body.password = req.body.password;
-
     // Validate password strength: 8-15 chars, lower, upper, number, special
     try {
         const password = String(req.body.password || "");
@@ -110,10 +108,11 @@ module.exports.register = async (req, res) => {
             message: "Email đã tồn tại",
         });
     } else {
+        const hashedPassword = md5(String(req.body.password || ""));
         const user = new User({
             fullName: req.body.fullName,
             email: req.body.email,
-            password: req.body.password,
+            password: hashedPassword,
             token: "",
         });
 
@@ -163,12 +162,24 @@ module.exports.login = async (req, res) => {
         return;
     }
 
-    if (req.body.password !== user.password) {
+    const inputPassword = String(req.body.password || "");
+    const inputPasswordMd5 = md5(inputPassword);
+
+    // Backward compatible:
+    // - new users: stored password is md5
+    // - old users: stored password may be plain text
+    const isPasswordValid = user.password === inputPasswordMd5 || user.password === inputPassword;
+    if (!isPasswordValid) {
         res.json({
             code: 400,
             message: "Sai mật khẩu",
         });
         return;
+    }
+
+    // Migrate old plain-text password to md5 on successful login
+    if (user.password === inputPassword) {
+        user.password = inputPasswordMd5;
     }
 
     user.token = await jwtHelper.accessToken({
@@ -367,7 +378,13 @@ module.exports.resetPassword = async (req, res) => {
     });
 
 
-    if (currentPassword !== user.password) {
+    const currentPasswordStr = String(currentPassword || "");
+    const newPasswordStr = String(newPassword || "");
+    const currentPasswordMd5 = md5(currentPasswordStr);
+    const newPasswordMd5 = md5(newPasswordStr);
+
+    const isCurrentPasswordValid = user.password === currentPasswordMd5 || user.password === currentPasswordStr;
+    if (!isCurrentPasswordValid) {
         res.json({
             code: 400,
             message: "Mật khẩu cũ không chính xác",
@@ -375,7 +392,9 @@ module.exports.resetPassword = async (req, res) => {
         return;
     }
 
-    if (newPassword === user.password) {
+    // Compare by hash to avoid edge cases when migrating from plain-text
+    const storedPasswordMd5 = user.password && user.password.length === 32 ? user.password : md5(String(user.password || ""));
+    if (newPasswordMd5 === storedPasswordMd5) {
         res.json({
             code: 401,
             message: "Mật khẩu mới không được giống mật khẩu cũ",
@@ -388,7 +407,7 @@ module.exports.resetPassword = async (req, res) => {
             _id: user_id,
         },
         {
-            password: newPassword,
+            password: newPasswordMd5,
         }
     );
 
